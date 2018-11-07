@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsServiceTelepeaje", "WindowsServiceTelepeaje\WindowsServiceTelepeaje.csproj", "{8056F4D8-9D8D-4E3A-91F9-DDBC71AAF368}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsClientTest", "WinFormsClientTest\WinFormsClientTest.csproj", "{1546AB75-33AE-45E0-9090-F7EB6A48A42E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8056F4D8-9D8D-4E3A-91F9-DDBC71AAF368}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8056F4D8-9D8D-4E3A-91F9-DDBC71AAF368}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8056F4D8-9D8D-4E3A-91F9-DDBC71AAF368}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1546AB75-33AE-45E0-9090-F7EB6A48A42E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1546AB75-33AE-45E0-9090-F7EB6A48A42E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1546AB75-33AE-45E0-9090-F7EB6A48A42E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1546AB75-33AE-45E0-9090-F7EB6A48A42E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
