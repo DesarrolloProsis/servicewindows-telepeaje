@@ -19,6 +19,7 @@ namespace WinFormsClientTest
 
         private void btnTest_Click(object sender, EventArgs e)
         {
+            btnTest.Enabled = false;
             WindowsServiceTelepeaje.Service1 service = new WindowsServiceTelepeaje.Service1();
             service.OnStartTest();
         }

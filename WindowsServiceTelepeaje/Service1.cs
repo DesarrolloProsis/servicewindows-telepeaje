@@ -206,7 +206,7 @@ namespace WindowsServiceTelepeaje
                             {
                                 if (MtGlb.oDataRowSqlServer.HasErrors == false)
                                 {
-                                    if (Convert.ToInt32(MtGlb.DsSqlServer.Tables["pn_importacion_wsIndra"].Rows[0][0]) <= 1)
+                                    if (Convert.ToInt32(MtGlb.oDataRowSqlServer[0]) <= 1)
                                     {
                                         //INICIO
                                         Secuencial = Convert.ToInt32(MtGlb.oDataRow["EVENT_NUMBER"]);
