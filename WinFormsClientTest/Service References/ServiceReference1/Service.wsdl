@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WSDL:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.genivia.com/mashup.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:trn="urn:transaction" xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="Service" targetNamespace="http://www.genivia.com/mashup.wsdl" xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/">
+  <WSDL:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="urn:transaction">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <xsd:element name="InsertaTran">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="secuencial" type="xsd:int" />
+            <xsd:element name="carril" type="xsd:int" />
+            <xsd:element name="Fecha" type="xsd:string" />
+            <xsd:element name="Hora" type="xsd:string" />
+            <xsd:element name="tarjeta" type="xsd:string" />
+            <xsd:element name="status" type="xsd:unsignedByte" />
+            <xsd:element name="clase" type="xsd:unsignedByte" />
+            <xsd:element name="ejes" type="xsd:unsignedByte" />
+            <xsd:element name="rodada" type="xsd:unsignedByte" />
+            <xsd:element name="sec_piso" type="xsd:int" />
+            <xsd:element name="turno" type="xsd:unsignedByte" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="secuencialTC" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="autorizacionTC" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tarjetaC" type="xsd:string" />
+            <xsd:element name="medioTC" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="statusTC" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="UtcTime" type="xsd:dateTime" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="LocalTime" type="xsd:dateTime" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tipoVehiculo" type="xsd:unsignedByte" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="Cuerpo" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="nombreLista" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="fechaCargaLista" type="xsd:dateTime" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="InsertaTranResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="InsertaTranResult">
+              <xsd:simpleType>
+                <xsd:restriction base="xsd:int">
+                  <xsd:enumeration value="0" />
+                  <xsd:enumeration value="1" />
+                </xsd:restriction>
+              </xsd:simpleType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </WSDL:types>
+  <WSDL:message name="SendTransactionResponse">
+    <WSDL:part name="parameters" element="trn:InsertaTranResponse" />
+  </WSDL:message>
+  <WSDL:message name="SendTransaction">
+    <WSDL:part name="parameters" element="trn:InsertaTran" />
+  </WSDL:message>
+  <WSDL:portType name="PortType">
+    <WSDL:operation name="MoveTransactionsUp">
+      <WSDL:input message="tns:SendTransaction" />
+      <WSDL:output message="tns:SendTransactionResponse" />
+    </WSDL:operation>
+  </WSDL:portType>
+  <WSDL:binding name="TransProc" type="tns:PortType">
+    <SOAP:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <WSDL:operation name="MoveTransactionsUp">
+      <SOAP:operation soapAction="" />
+      <WSDL:input>
+        <SOAP:body use="literal" parts="parameters" />
+      </WSDL:input>
+      <WSDL:output>
+        <SOAP:body use="literal" parts="parameters" />
+      </WSDL:output>
+    </WSDL:operation>
+  </WSDL:binding>
+  <WSDL:service name="PlazaWS">
+    <WSDL:port name="PortTrans" binding="tns:TransProc">
+      <SOAP:address location="http://172.30.43.100:8080/transactions-receiver/services/PlazaWS" />
+    </WSDL:port>
+  </WSDL:service>
+</WSDL:definitions>
