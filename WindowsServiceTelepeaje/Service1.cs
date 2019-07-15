@@ -126,6 +126,8 @@ namespace WindowsServiceTelepeaje
 
                 int resultado = 0;
                 bool CarrilInex = false;
+                bool TagEmpty = false;
+                string[] ParamsTagEmpty = new string[3];
 
                 //ULTIMA TRANSACTION DE LA DB SQL SERVER PROSIS
                 StrQuerys = @"SELECT TOP (1) [id_exp]
@@ -231,6 +233,15 @@ namespace WindowsServiceTelepeaje
                                         //'<!--11:59:59-->
                                         //'<element name="tarjeta" type="xsd:string"/>
                                         Tarjeta = MtGlb.oDataRow["CONTENU_ISO"].ToString().Substring(0, 15).Trim();
+
+                                        if (string.IsNullOrEmpty(Tarjeta.Substring(0, 3)))
+                                        {
+                                            TagEmpty = true;
+                                            ParamsTagEmpty[0] = Fecha;
+                                            ParamsTagEmpty[1] = Hora;
+                                            ParamsTagEmpty[2] = MtGlb.oDataRow["EVENT_NUMBER"].ToString();
+                                            break;
+                                        }
 
                                         //isoc
                                         if (Tarjeta.Length == 13 && Tarjeta.Substring(0, 3) == "009")
@@ -463,6 +474,15 @@ namespace WindowsServiceTelepeaje
                             using (StreamWriter file = new StreamWriter(path + archivo, true))
                             {
                                 file.WriteLine("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril."); //se agrega información al documento
+                                file.Dispose();
+                                file.Close();
+                            }
+                        }
+                        else if (TagEmpty == true)
+                        {
+                            using (StreamWriter file = new StreamWriter(path + archivo, true))
+                            {
+                                file.WriteLine("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " tag vacio " + ParamsTagEmpty[0] + " ", ParamsTagEmpty[1] + "EVENT" + ParamsTagEmpty[2]); //se agrega información al documento
                                 file.Dispose();
                                 file.Close();
                             }
