@@ -15,26 +15,20 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_039705ABD159FB36D8E217BE485A53FB"
+        "MsmKey" = "8:_20613653A3B6430A2417A13EBEAF5722"
         "OwnerKey" = "8:_610DF5E3AC0245BAA2F3ED697EE15050"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_04DFB91640A678CFBDA677322D2614FA"
+        "MsmKey" = "8:_2DECB356C997B7EAA9BF7F33633F325A"
         "OwnerKey" = "8:_610DF5E3AC0245BAA2F3ED697EE15050"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_12E5531FEF3292A14AACF011E46D6647"
-        "OwnerKey" = "8:_610DF5E3AC0245BAA2F3ED697EE15050"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_12E5531FEF3292A14AACF011E46D6647"
-        "OwnerKey" = "8:_039705ABD159FB36D8E217BE485A53FB"
+        "MsmKey" = "8:_2DECB356C997B7EAA9BF7F33633F325A"
+        "OwnerKey" = "8:_20613653A3B6430A2417A13EBEAF5722"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -51,44 +45,50 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DBA4B4C50A812AA1751BE88273566246"
+        "MsmKey" = "8:_E453BD715FEF527AB8B419CB9CFDC302"
+        "OwnerKey" = "8:_610DF5E3AC0245BAA2F3ED697EE15050"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FC8B8A759ECC0D1EED3A855E779F525D"
         "OwnerKey" = "8:_610DF5E3AC0245BAA2F3ED697EE15050"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DBA4B4C50A812AA1751BE88273566246"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_610DF5E3AC0245BAA2F3ED697EE15050"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_04DFB91640A678CFBDA677322D2614FA"
+        "OwnerKey" = "8:_E453BD715FEF527AB8B419CB9CFDC302"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_039705ABD159FB36D8E217BE485A53FB"
+        "OwnerKey" = "8:_20613653A3B6430A2417A13EBEAF5722"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_12E5531FEF3292A14AACF011E46D6647"
+        "OwnerKey" = "8:_2DECB356C997B7EAA9BF7F33633F325A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C3F5AC7AFA8BEAE19E3625A11656C7D7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_FC8B8A759ECC0D1EED3A855E779F525D"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -109,6 +109,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -125,6 +133,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -210,14 +226,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_039705ABD159FB36D8E217BE485A53FB"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_20613653A3B6430A2417A13EBEAF5722"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_039705ABD159FB36D8E217BE485A53FB"
+                    "_20613653A3B6430A2417A13EBEAF5722"
                     {
                     "Name" = "8:EntityFramework.SqlServer.dll"
                     "Attributes" = "3:512"
@@ -241,45 +257,14 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_04DFB91640A678CFBDA677322D2614FA"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PlazaWS, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_04DFB91640A678CFBDA677322D2614FA"
-                    {
-                    "Name" = "8:PlazaWS.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:PlazaWS.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_2B2B12DF041B4362B08A3ADB0093A7AD"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_12E5531FEF3292A14AACF011E46D6647"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2DECB356C997B7EAA9BF7F33633F325A"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_12E5531FEF3292A14AACF011E46D6647"
+                    "_2DECB356C997B7EAA9BF7F33633F325A"
                     {
                     "Name" = "8:EntityFramework.dll"
                     "Attributes" = "3:512"
@@ -334,14 +319,45 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DBA4B4C50A812AA1751BE88273566246"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E453BD715FEF527AB8B419CB9CFDC302"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:PlazaWS, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_E453BD715FEF527AB8B419CB9CFDC302"
+                    {
+                    "Name" = "8:PlazaWS.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:PlazaWS.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_2B2B12DF041B4362B08A3ADB0093A7AD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FC8B8A759ECC0D1EED3A855E779F525D"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Oracle.DataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_DBA4B4C50A812AA1751BE88273566246"
+                    "_FC8B8A759ECC0D1EED3A855E779F525D"
                     {
                     "Name" = "8:oracle.dataaccess.dll"
                     "Attributes" = "3:512"
@@ -430,12 +446,12 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:DESARROLLO2"
+        "Manufacturer" = "8:PROSIS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:WindowsServiceTelepeaje_Installer"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:DESARROLLO2"
+        "ARPCONTACT" = "8:geezylucas"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"

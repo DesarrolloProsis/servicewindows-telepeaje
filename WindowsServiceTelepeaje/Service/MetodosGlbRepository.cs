@@ -70,6 +70,49 @@ namespace WindowsServiceTelepeaje.Service
         }
 
         /// <summary>
+        /// Ejecuta un query y lo agrega a un DataSet (Sql Server) ProsisDBv1_1
+        /// </summary>
+        /// <param name="Query"></param>
+        /// <param name="NameTable"></param>
+        /// <returns></returns>
+        public bool QueryDataSet_SqlServerDBv1_1(string Query, string NameTable)
+        {
+            bool Rpt = false;
+
+            using (SqlCommand Cmd = new SqlCommand(Query, ConnectionDbContext()))
+            {
+                using (SqlDataAdapter Da = new SqlDataAdapter(Cmd))
+                {
+                    if (DsSqlServer.Tables.Count != 0)
+                        DsSqlServer.Clear();
+
+                    int iPosicionFilaActual = 0;
+                    try
+                    {
+                        Da.Fill(DsSqlServer, NameTable);
+                        if (DsSqlServer.Tables[NameTable].Rows.Count > 0)
+                        {
+                            oDataRowSqlServer = DsSqlServer.Tables[NameTable].Rows[iPosicionFilaActual];
+                            Rpt = true;
+                        }
+                        else
+                            Rpt = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        Rpt = false;
+                    }
+                    finally
+                    {
+                        Cmd.Dispose();
+                    }
+                }
+            }
+
+            return Rpt;
+        }
+
+        /// <summary>
         /// Ejecuta un query y lo agrega a un DataSet
         /// </summary>
         /// <param name="Query"></param>
