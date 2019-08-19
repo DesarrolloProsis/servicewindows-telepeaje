@@ -55,7 +55,7 @@ namespace WindowsServiceTelepeaje
         {
             timProcess = new System.Timers.Timer
             {
-                Interval = 60000
+                Interval = 300000
             };
             timProcess.Elapsed += new System.Timers.ElapsedEventHandler(TimProcess_Elapsed);
             timProcess.Enabled = true;
@@ -151,7 +151,7 @@ namespace WindowsServiceTelepeaje
                                   ,[fecha_ext]
                                   ,[Shift_number]
                                   ,[PLAZA]
-                          FROM [pn_importacion_wsIndra] 
+                          FROM [pn_importacion_wsIndra]
                           ORDER BY DATE_TRANSACTION DESC";
 
                 var query = db.pn_importacion_wsIndra.SqlQuery(StrQuerys).FirstOrDefault();
@@ -164,7 +164,7 @@ namespace WindowsServiceTelepeaje
                         H_inicio_turno = Convert.ToDateTime(MtGlb.oDataRowSqlServer["DATE_TRANSACTION"]).ToString("yyyy/MM/dd HH:mm:ss");
                 }
                 else
-                    H_inicio_turno = Convert.ToDateTime("2019/07/27 09:00:59").ToString("yyyy/MM/dd HH:mm:ss");
+                    H_inicio_turno = Convert.ToDateTime("2018/11/06 17:30:00").ToString("yyyy/MM/dd HH:mm:ss");
 
                 StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
                             "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
