@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using WindowsServiceTelepeaje.Models;
 using WindowsServiceTelepeaje.Service;
@@ -70,25 +65,28 @@ namespace WindowsServiceTelepeaje
 
         protected override void OnStop()
         {
-            using (StreamWriter file = new StreamWriter(path + archivo, true))
-            {
-                file.WriteLine("Termine a las: " + DateTime.Now.ToString()); //se agrega información al documento
-                file.Dispose();
-                file.Close();
-            }
+            //using (StreamWriter file = new StreamWriter(path + archivo, true))
+            //{
+            //    file.WriteLine("Termine a las: " + DateTime.Now.ToString()); //se agrega información al documento
+            //    file.Dispose();
+            //    file.Close();
+            //}
+            this.EscribeLog("Termine a las: " + DateTime.Now.ToString());
         }
 
         private void ExecuteProcess()
         {
             try
             {
-                using (StreamWriter file = new StreamWriter(path + archivo, true))
-                {
-                    i++;
-                    file.WriteLine("Se ejecuto el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
-                    file.Dispose();
-                    file.Close();
-                }
+
+                //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                //{
+                //    i++;
+                //    file.WriteLine("Se ejecuto el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
+                //    file.Dispose();
+                //    file.Close();
+                //}
+                this.EscribeLog("Se ejecuto el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString());
 
                 /***********************************************************************************************************/
 
@@ -457,7 +455,7 @@ namespace WindowsServiceTelepeaje
                                                                                 Convert.ToDateTime(LocalTime.ToString("yyyy-MM-ddTHH:mm:ss")),
                                                                                 Convert.ToByte(TipoVehiculo),
                                                                                 Convert.ToString(Cuerpo));
-
+                                            //resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
                                             if (resultado == 1)
                                             {
                                                 if (MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == "@" || MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == ":")
@@ -502,12 +500,13 @@ namespace WindowsServiceTelepeaje
                     }
                     else
                     {
-                        using (StreamWriter file = new StreamWriter(path + archivo, true))
-                        {
-                            file.WriteLine("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles."); //se agrega información al documento
-                            file.Dispose();
-                            file.Close();
-                        }
+                        //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                        //{
+                        //    file.WriteLine("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles."); //se agrega información al documento
+                        //    file.Dispose();
+                        //    file.Close();
+                        //}
+                        this.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.");
                         timProcess.Enabled = false;
                     }
                 }
@@ -515,52 +514,57 @@ namespace WindowsServiceTelepeaje
                 // VALIDACIONES
                 if (tagempty)
                 {
-                    using (StreamWriter file = new StreamWriter(path + archivo, true))
-                    {
-                        file.WriteLine("Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
-                        file.Dispose();
-                        file.Close();
-                    }
+                    //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                    //{
+                    //    file.WriteLine("Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
+                    //    file.Dispose();
+                    //    file.Close();
+                    //}
+                    this.EscribeLog("Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString());
                     timProcess.Enabled = false;
                 }
                 else if (monto_detec)
                 {
-                    using (StreamWriter file = new StreamWriter(path + archivo, true))
-                    {
-                        file.WriteLine("Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
-                        file.Dispose();
-                        file.Close();
-                    }
+                    //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                    //{
+                    //    file.WriteLine("Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
+                    //    file.Dispose();
+                    //    file.Close();
+                    //}
+                    this.EscribeLog("Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString());
                     timProcess.Enabled = false;
                 }
                 else if (CarrilInex)
                 {
-                    using (StreamWriter file = new StreamWriter(path + archivo, true))
-                    {
-                        file.WriteLine("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril."); //se agrega información al documento
-                        file.Dispose();
-                        file.Close();
-                    }
+                    //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                    //{
+                    //    file.WriteLine(); //se agrega información al documento
+                    //    file.Dispose();
+                    //    file.Close();
+                    //}
+                    this.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.");
                     timProcess.Enabled = false;
                 }
                 else if (event_numbool)
                 {
-                    using (StreamWriter file = new StreamWriter(path + archivo, true))
-                    {
-                        file.WriteLine("EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"]); //se agrega información al documento
-                        file.Dispose();
-                        file.Close();
-                    }
+                    //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                    //{
+                    //    file.WriteLine("EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"]); //se agrega información al documento
+                    //    file.Dispose();
+                    //    file.Close();
+                    //}
+                    this.EscribeLog("EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"]);
                     timProcess.Enabled = false;
                 }
                 else
                 {
-                    using (StreamWriter file = new StreamWriter(path + archivo, true))
-                    {
-                        file.WriteLine("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros."); //se agrega información al documento
-                        file.Dispose();
-                        file.Close();
-                    }
+                    //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                    //{
+                    //    file.WriteLine("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros."); //se agrega información al documento
+                    //    file.Dispose();
+                    //    file.Close();
+                    //}
+                    this.EscribeLog("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.");
                     timProcess.Enabled = true;
                 }
 
@@ -570,15 +574,45 @@ namespace WindowsServiceTelepeaje
             }
             catch (Exception ex)
             {
-                using (StreamWriter file = new StreamWriter(path + archivo, true))
+                //using (StreamWriter file = new StreamWriter(path + archivo, true))
+                //{
+                //    file.WriteLine("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace); //se agrega información al documento
+                //    file.Dispose();
+                //    file.Close();
+                //}
+                this.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
+                timProcess.Enabled = false;
+            }
+        }
+    
+
+        //Metodo para escribir log con el ultimo registro al inicio
+        private void EscribeLog(string newRow)
+        {
+            string contenido="";
+            try
+            {
+                StreamReader sr = new StreamReader(path + archivo, true);
+                contenido = sr.ReadToEnd();
+                sr.Dispose();
+                sr.Close();
+                using (StreamWriter file = new StreamWriter(path + "WindowsService_Temporal.txt", true))
                 {
-                    file.WriteLine("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace); //se agrega información al documento
+                    file.WriteLine(newRow); //se agrega información al documento
+                    file.WriteLine(contenido);
                     file.Dispose();
                     file.Close();
                 }
-
-                timProcess.Enabled = false;
+                File.Delete(path + archivo);
+                //Renombrar archivo
+                File.Move(path + "WindowsService_Temporal.txt", path + archivo);
             }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex);
+            }
+
         }
     }
 }
