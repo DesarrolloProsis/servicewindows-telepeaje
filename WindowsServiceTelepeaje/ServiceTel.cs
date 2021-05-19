@@ -81,7 +81,7 @@ namespace WindowsServiceTelepeaje
 
                 //using (StreamWriter file = new StreamWriter(path + archivo, true))
                 //{
-                //    i++;
+                    i++;
                 //    file.WriteLine("Se ejecuto el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
                 //    file.Dispose();
                 //    file.Close();
