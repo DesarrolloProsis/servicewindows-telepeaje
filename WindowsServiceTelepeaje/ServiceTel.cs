@@ -10,7 +10,7 @@ using WindowsServiceTelepeaje.Service;
 
 namespace WindowsServiceTelepeaje
 {
-    public partial class Service1 : ServiceBase
+    public partial class ServiceTel : ServiceBase
     {
         private ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
 
@@ -21,7 +21,7 @@ namespace WindowsServiceTelepeaje
         private string path = @"C:\ExecutedActionSW\";
         private string archivo = "WindowsService.txt";
 
-        public Service1()
+        public ServiceTel()
         {
             InitializeComponent();
 
