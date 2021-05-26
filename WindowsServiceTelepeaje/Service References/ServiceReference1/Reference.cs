@@ -215,9 +215,9 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
                     System.DateTime UtcTime, 
                     System.DateTime LocalTime, 
                     byte tipoVehiculo, 
-                    string Cuerpo, 
-                    string nombreLista, 
-                    System.DateTime fechaCargaLista) {
+                    string Cuerpo) { 
+                    //string nombreLista, 
+                    //System.DateTime fechaCargaLista) {
             WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest inValue = new WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest();
             inValue.secuencial = secuencial;
             inValue.carril = carril;
@@ -239,8 +239,8 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
             inValue.LocalTime = LocalTime;
             inValue.tipoVehiculo = tipoVehiculo;
             inValue.Cuerpo = Cuerpo;
-            inValue.nombreLista = nombreLista;
-            inValue.fechaCargaLista = fechaCargaLista;
+            //inValue.nombreLista = nombreLista;
+            //inValue.fechaCargaLista = fechaCargaLista;
             WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse retVal = ((WindowsServiceTelepeaje.ServiceReference1.PortType)(this)).MoveTransactionsUp(inValue);
             return retVal.InsertaTranResult;
         }
