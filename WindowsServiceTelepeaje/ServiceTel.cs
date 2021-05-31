@@ -20,7 +20,8 @@ namespace WindowsServiceTelepeaje
         private int i = 0;
         private string path = @"C:\ExecutedActionSW\";
         private string archivo = "WindowsService.txt";
-
+        private bool iniciarCon = true;
+        MetodosGlbRepository MtGlb;
         public ServiceTel()
         {
             InitializeComponent();
@@ -39,7 +40,7 @@ namespace WindowsServiceTelepeaje
         {
             timProcess = new System.Timers.Timer
             {
-                Interval = 300000
+                Interval = 30000
             };
             timProcess.Elapsed += new System.Timers.ElapsedEventHandler(TimProcess_Elapsed);
             timProcess.Enabled = true;
@@ -60,7 +61,7 @@ namespace WindowsServiceTelepeaje
         private void TimProcess_Elapsed(object sender, ElapsedEventArgs e)
         {
             timProcess.Enabled = false;
-            ExecuteProcess();
+                ExecuteProcess();
         }
 
         protected override void OnStop()
@@ -81,6 +82,7 @@ namespace WindowsServiceTelepeaje
 
                 //using (StreamWriter file = new StreamWriter(path + archivo, true))
                 //{
+                Int16 Rodada = 0;
                     i++;
                 //    file.WriteLine("Se ejecuto el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
                 //    file.Dispose();
@@ -90,8 +92,13 @@ namespace WindowsServiceTelepeaje
 
                 /***********************************************************************************************************/
 
-                MetodosGlbRepository MtGlb = new MetodosGlbRepository();
-
+                
+                if (iniciarCon)
+                {
+                    MtGlb = new MetodosGlbRepository();
+                    MtGlb.CrearConexionOracle();
+                    iniciarCon = false;
+                }
                 var IdPlazaCobro = ConfigurationManager.AppSettings["plazacobro"];
 
                 string StrQuerys;
@@ -109,7 +116,6 @@ namespace WindowsServiceTelepeaje
                 Int16 Status;
                 int Clase = 0;
                 int Ejes = 0;
-                Int16 Rodada = 0;
                 int Sec_piso;
                 Int16 Turno = 0;
 
@@ -156,16 +162,16 @@ namespace WindowsServiceTelepeaje
 
                 if (query != null)
                     H_inicio_turno = query.DATE_TRANSACTION.Value.ToString("yyyy/MM/dd HH:mm:ss");
-                else if (MtGlb.QueryDataSet_SqlServer(StrQuerys, "DATE_TRANSACTION"))
-                {
-                    if (MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows.Count > 0)
-                        H_inicio_turno = Convert.ToDateTime(MtGlb.oDataRowSqlServer["DATE_TRANSACTION"]).ToString("yyyy/MM/dd HH:mm:ss");
-                }
+                //else if (MtGlb.QueryDataSet_SqlServer(StrQuerys, "DATE_TRANSACTION"))
+                //{
+                //    if (MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows.Count > 0)
+                //        H_inicio_turno = Convert.ToDateTime(MtGlb.oDataRowSqlServer["DATE_TRANSACTION"]).ToString("yyyy/MM/dd HH:mm:ss");
+                //}
                 else
-                    H_inicio_turno = Convert.ToDateTime("201/08/16 14:06:50").ToString("yyyy/MM/dd HH:mm:ss");
+                    H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
 
                 H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddMinutes(-10).ToString("yyyy/MM/dd HH:mm:ss");
-
+                //ORACLE
                 StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
                             "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
                             "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
@@ -174,7 +180,7 @@ namespace WindowsServiceTelepeaje
                             
                             "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
                             "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
-                            "WHERE " +
+                            "WHERE" +
                             "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
                             "AND  ID_PAIEMENT  = 15 " +
                             "AND (TRANSACTION.Id_Voie = '1' " +
@@ -182,7 +188,7 @@ namespace WindowsServiceTelepeaje
                             "OR TRANSACTION.Id_Voie = '3' " +
                             "OR TRANSACTION.Id_Voie = '4' " +
                             "OR TRANSACTION.Id_Voie = 'X') " +
-                            "ORDER BY DATE_TRANSACTION";
+                            "ORDER BY DATE_TRANSACTION ";
 
                 if (MtGlb.QueryDataSet(StrQuerys, "TRANSACTION"))
                 {
@@ -569,9 +575,7 @@ namespace WindowsServiceTelepeaje
                     timProcess.Enabled = true;
                 }
 
-                MtGlb.ExitConnectionDbContext();
-                MtGlb.ExitConnectionOracle();
-                MtGlb.ExitConnectionProsis();
+                
             }
             catch (Exception ex)
             {
@@ -583,6 +587,14 @@ namespace WindowsServiceTelepeaje
                 //}
                 this.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
                 timProcess.Enabled = false;
+            }
+            finally
+            {
+                this.EscribeLog("==========FIN DEL PROCESO PROSIS" + i.ToString() + " a las " + DateTime.Now.ToString());
+
+                MtGlb.ExitConnectionDbContext();
+                MtGlb.ExitConnectionOracle();
+                //MtGlb.ExitConnectionProsis();
             }
         }
     

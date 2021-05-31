@@ -18,13 +18,20 @@ namespace WindowsServiceTelepeaje.Service
         public DataRow oDataRow;
 
         private static readonly string ConStrDbContext = ConfigurationManager.ConnectionStrings["ApplicationDbContext"].ConnectionString;
-        private static SqlConnection connectionDbContext = new SqlConnection(ConStrDbContext);
+        private static SqlConnection connectionDbContext;
 
-        private static readonly string ConStrProsis = ConfigurationManager.ConnectionStrings["PROSIS"].ConnectionString;
-        private static SqlConnection connectionProsis = new SqlConnection(ConStrProsis);
+        //private static readonly string ConStrProsis = ConfigurationManager.ConnectionStrings["PROSIS"].ConnectionString;
+        //private static SqlConnection connectionProsis;  //Conexion para la migracion...
 
         private static readonly string ConStrOracle = ConfigurationManager.ConnectionStrings["OracleSql"].ConnectionString;
-        private static OracleConnection connectionOracle = new OracleConnection(ConStrOracle);
+        private static OracleConnection connectionOracle;
+        
+        public void CrearConexionOracle()
+        {
+            connectionOracle = new OracleConnection(ConStrOracle);
+            //connectionProsis = new SqlConnection(ConStrProsis);
+            connectionDbContext = new SqlConnection(ConStrDbContext);
+        }
 
         /// <summary>
         /// Ejecuta un query y lo agrega a un DataSet (Sql Server)
@@ -32,42 +39,42 @@ namespace WindowsServiceTelepeaje.Service
         /// <param name="Query"></param>
         /// <param name="NameTable"></param>
         /// <returns></returns>
-        public bool QueryDataSet_SqlServer(string Query, string NameTable)
-        {
-            bool Rpt = false;
+        //public bool QueryDataSet_SqlServer(string Query, string NameTable)
+        //{
+        //    bool Rpt = false;
 
-            using (SqlCommand Cmd = new SqlCommand(Query, ConnectionProsis()))
-            {
-                using (SqlDataAdapter Da = new SqlDataAdapter(Cmd))
-                {
-                    if (DsSqlServer.Tables.Count != 0)
-                        DsSqlServer.Clear();
+        //    using (SqlCommand Cmd = new SqlCommand(Query, ConnectionProsis()))
+        //    {
+        //        using (SqlDataAdapter Da = new SqlDataAdapter(Cmd))
+        //        {
+        //            if (DsSqlServer.Tables.Count != 0)
+        //                DsSqlServer.Clear();
 
-                    int iPosicionFilaActual = 0;
-                    try
-                    {
-                        Da.Fill(DsSqlServer, NameTable);
-                        if (DsSqlServer.Tables[NameTable].Rows.Count > 0)
-                        {
-                            oDataRowSqlServer = DsSqlServer.Tables[NameTable].Rows[iPosicionFilaActual];
-                            Rpt = true;
-                        }
-                        else
-                            Rpt = false;
-                    }
-                    catch (Exception ex)
-                    {
-                        Rpt = false;
-                    }
-                    finally
-                    {
-                        Cmd.Dispose();
-                    }
-                }
-            }
+        //            int iPosicionFilaActual = 0;
+        //            try
+        //            {
+        //                Da.Fill(DsSqlServer, NameTable);
+        //                if (DsSqlServer.Tables[NameTable].Rows.Count > 0)
+        //                {
+        //                    oDataRowSqlServer = DsSqlServer.Tables[NameTable].Rows[iPosicionFilaActual];
+        //                    Rpt = true;
+        //                }
+        //                else
+        //                    Rpt = false;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Rpt = false;
+        //            }
+        //            finally
+        //            {
+        //                Cmd.Dispose();
+        //            }
+        //        }
+        //    }
 
-            return Rpt;
-        }
+        //    return Rpt;
+        //}
 
         /// <summary>
         /// Ejecuta un query y lo agrega a un DataSet (Sql Server) ProsisDBv1_1
@@ -196,18 +203,18 @@ namespace WindowsServiceTelepeaje.Service
             connectionDbContext.Close();
         }
 
-        public static SqlConnection ConnectionProsis()
-        {
-            if (connectionProsis.State == ConnectionState.Closed)
-                connectionProsis.Open();
+        //public static SqlConnection ConnectionProsis()
+        //{
+        //    if (connectionProsis.State == ConnectionState.Closed)
+        //        connectionProsis.Open();
 
-            return connectionProsis;
-        }
+        //    return connectionProsis;
+        //}
 
-        public void ExitConnectionProsis()
-        {
-            connectionProsis.Close();
-        }
+        //public void ExitConnectionProsis()
+        //{
+        //    connectionProsis.Close();
+        //}
 
         public static OracleConnection ConnectionOracle()
         {
