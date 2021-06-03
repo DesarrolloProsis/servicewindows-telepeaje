@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Configuration;
-using System.Data;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.ServiceProcess;
-using System.Timers;
-using WindowsServiceTelepeaje.Models;
-using WindowsServiceTelepeaje.Service;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using ServiceTelepeaje.Logic.Models;
+using System.Configuration;
 
-namespace WindowsServiceTelepeaje
+namespace ServiceTelepeaje.Logic
 {
-    public partial class ServiceTel : ServiceBase
+    public class ProcesaInformacion
     {
-        private ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
-
         private ApplicationDbContext db = new ApplicationDbContext();
 
         private System.Timers.Timer timProcess = null;
@@ -22,65 +20,40 @@ namespace WindowsServiceTelepeaje
         private string archivo = "WindowsService.txt";
         private bool iniciarCon = true;
         MetodosGlbRepository MtGlb;
-        public ServiceTel()
-        {
-            InitializeComponent();
 
-            if (!Directory.Exists(path))
+        private void EscribeLog(string newRow)
+        {
+            string contenido = "";
+            try
             {
-                Directory.CreateDirectory(path);
-                if (!File.Exists(path + archivo))
+                StreamReader sr = new StreamReader(path + archivo, true);
+                contenido = sr.ReadToEnd();
+                sr.Dispose();
+                sr.Close();
+                using (StreamWriter file = new StreamWriter(path + "WindowsService_Temporal.txt", true))
                 {
-                    File.CreateText(path + archivo);
+                    file.WriteLine(newRow); //se agrega información al documento
+                    file.WriteLine(contenido);
+                    file.Dispose();
+                    file.Close();
                 }
+                File.Delete(path + archivo);
+                //Renombrar archivo
+                File.Move(path + "WindowsService_Temporal.txt", path + archivo);
             }
-        }
-
-        protected override void OnStart(string[] args)
-        {
-            timProcess = new System.Timers.Timer
+            catch (Exception ex)
             {
-                Interval = 300000
-            };
-            timProcess.Elapsed += new System.Timers.ElapsedEventHandler(TimProcess_Elapsed);
-            timProcess.Enabled = true;
-            timProcess.Start();
-        }
 
-        public void OnStartTest()
-        {
-            timProcess = new System.Timers.Timer
-            {
-                Interval = 300000
-            };
-            timProcess.Elapsed += new System.Timers.ElapsedEventHandler(TimProcess_Elapsed);
-            timProcess.Enabled = true;
-            timProcess.Start();
-        }
+                Console.WriteLine(ex);
+            }
 
-        private void TimProcess_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            timProcess.Enabled = false;
-                ExecuteProcess();
         }
-
-        protected override void OnStop()
-        {
-            //using (StreamWriter file = new StreamWriter(path + archivo, true))
-            //{
-            //    file.WriteLine("Termine a las: " + DateTime.Now.ToString()); //se agrega información al documento
-            //    file.Dispose();
-            //    file.Close();
-            //}
-            this.EscribeLog("Termine a las: " + DateTime.Now.ToString());
-        }
-
         private void ExecuteProcess()
         {
             int TiempoAtras2 = 0;
             TiempoAtras2 = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
-            
-            this.EscribeLog("Tiempo atras"+ TiempoAtras2);
+
+            this.EscribeLog("Tiempo atras" + TiempoAtras2);
 
 
             try
@@ -89,7 +62,7 @@ namespace WindowsServiceTelepeaje
                 //using (StreamWriter file = new StreamWriter(path + archivo, true))
                 //{
                 Int16 Rodada = 0;
-                    i++;
+                i++;
                 //    file.WriteLine("Se ejecuto el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
                 //    file.Dispose();
                 //    file.Close();
@@ -98,7 +71,7 @@ namespace WindowsServiceTelepeaje
 
                 /***********************************************************************************************************/
 
-                
+
                 if (iniciarCon)
                 {
                     MtGlb = new MetodosGlbRepository();
@@ -175,7 +148,7 @@ namespace WindowsServiceTelepeaje
                 //}
                 else
                     H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
-                int TiempoAtras = Convert.ToInt32( ConfigurationManager.AppSettings["tiempoAtras"]);
+                int TiempoAtras = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
                 H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddHours(-TiempoAtras).ToString("yyyy/MM/dd HH:mm:ss");
                 //ORACLE
                 StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
@@ -183,7 +156,7 @@ namespace WindowsServiceTelepeaje
                             "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
                             "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
                             "FROM TRANSACTION " +
-                            
+
                             "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
                             "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
                             "WHERE" +
@@ -581,7 +554,7 @@ namespace WindowsServiceTelepeaje
                     timProcess.Enabled = true;
                 }
 
-                
+
             }
             catch (Exception ex)
             {
@@ -603,62 +576,5 @@ namespace WindowsServiceTelepeaje
                 //MtGlb.ExitConnectionProsis();
             }
         }
-    
-
-        //Metodo para escribir log con el ultimo registro al inicio
-        private void EscribeLog(string newRow)
-        {
-            string contenido="";
-            try
-            {
-                StreamReader sr = new StreamReader(path + archivo, true);
-                contenido = sr.ReadToEnd();
-                sr.Dispose();
-                sr.Close();
-                using (StreamWriter file = new StreamWriter(path + "WindowsService_Temporal.txt", true))
-                {
-                    file.WriteLine(newRow); //se agrega información al documento
-                    file.WriteLine(contenido);
-                    file.Dispose();
-                    file.Close();
-                }
-                File.Delete(path + archivo);
-                //Renombrar archivo
-                File.Move(path + "WindowsService_Temporal.txt", path + archivo);
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine(ex);
-            }
-
-        }
     }
 }
-
-#region Comentarios
-//if (MtGlb.QueryDataSet_SqlServer(StrQuerys, "DATE_TRANSACTION"))
-//{
-//    if (MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows.Count > 0)
-//    {
-//        foreach (DataRow item in MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows)
-//        {
-//            H_inicio_turno = Convert.ToDateTime(item[0]).ToString("yyyy/MM/dd HH:mm:ss");
-//        }
-//    }
-//}
-//else if (MtGlb.QueryDataSet_SqlServer_prosis(StrQuerys, "DATE_TRANSACTION"))
-//{
-//    if (MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows.Count > 0)
-//    {
-//        foreach (DataRow item in MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows)
-//        {
-//            H_inicio_turno = Convert.ToDateTime(item[0]).ToString("yyyy/MM/dd HH:mm:ss");
-//        }
-//    }
-//}
-//else
-//{
-//    H_inicio_turno = Convert.ToDateTime("2018/10/28 00:00:00").ToString("yyyy/MM/dd HH:mm:ss");
-//}
-#endregion
