@@ -170,7 +170,7 @@ namespace WindowsServiceTelepeaje
                 else
                     H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
 
-                H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddMinutes(-10).ToString("yyyy/MM/dd HH:mm:ss");
+                H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddMinutes(-60).ToString("yyyy/MM/dd HH:mm:ss");
                 //ORACLE
                 StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
                             "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
