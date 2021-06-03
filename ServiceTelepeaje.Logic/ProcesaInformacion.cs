@@ -12,6 +12,8 @@ namespace ServiceTelepeaje.Logic
 {
     public class ProcesaInformacion
     {
+        private readonly ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
+
         private ApplicationDbContext db = new ApplicationDbContext();
 
         private System.Timers.Timer timProcess = null;

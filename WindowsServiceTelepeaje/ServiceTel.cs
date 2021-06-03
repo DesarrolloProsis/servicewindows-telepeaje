@@ -172,8 +172,7 @@ namespace WindowsServiceTelepeaje
                 //{
                 //    if (MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows.Count > 0)
                 //        H_inicio_turno = Convert.ToDateTime(MtGlb.oDataRowSqlServer["DATE_TRANSACTION"]).ToString("yyyy/MM/dd HH:mm:ss");
-                //}
-                else
+                //}                else
                     H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
                 int TiempoAtras = Convert.ToInt32( ConfigurationManager.AppSettings["tiempoAtras"]);
                 H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddHours(-TiempoAtras).ToString("yyyy/MM/dd HH:mm:ss");
