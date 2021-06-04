@@ -431,7 +431,7 @@ namespace WindowsServiceTelepeaje
                                                                                 Convert.ToDateTime(LocalTime.ToString("yyyy-MM-ddTHH:mm:ss")),
                                                                                 Convert.ToByte(TipoVehiculo),
                                                                                 Convert.ToString(Cuerpo));
-                                            resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
+                                            //resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
                                             if (resultado == 1)
                                             {
                                                 this.EscribeLog("se inserto " + Tarjeta + " Fecha: "+ Fecha +" nEvento: "+ MtGlb.oDataRow["EVENT_NUMBER"].ToString());
