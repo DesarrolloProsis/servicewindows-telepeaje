@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace WindowsServiceTelepeaje.Service
 {
-    class MetodosGlbRepository
+    public class MetodosGlbRepository
     {
         public DataSet Ds = new DataSet();
         public DataSet DsSqlServer = new DataSet();

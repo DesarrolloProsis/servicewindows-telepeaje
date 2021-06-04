@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ServiceTelepeaje.Logic;
+using System;
 using System.Windows.Forms;
 
 namespace ServiceTelepeaje.View
@@ -17,5 +11,11 @@ namespace ServiceTelepeaje.View
             InitializeComponent();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Hola");
+            ProcesaInformacion procesaInformacion = new ProcesaInformacion();
+            procesaInformacion.ExecuteProcess();
+        }
     }
 }

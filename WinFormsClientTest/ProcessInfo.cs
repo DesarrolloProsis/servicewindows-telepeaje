@@ -1,56 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data;
-using ServiceTelepeaje.Logic.Models;
-using System.Configuration;
+using WindowsServiceTelepeaje.Models;
+using WindowsServiceTelepeaje.Service;
 
-namespace ServiceTelepeaje.Logic
+namespace WindowsServiceTelepeaje
 {
-    public class ProcesaInformacion
+    public class ProcessInfo
     {
-        private readonly ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
+        private ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
 
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        private System.Timers.Timer timProcess = null;
+        //private System.Timers.Timer timProcess = null;
         private int i = 0;
-        private string path = @"C:\ExecutedActionSW\";
-        private string archivo = "WindowsService.txt";
+        private string path = @"C:\ExecutedActionSW\Manual\";
+        private string archivo = "LogManual.txt";
         private bool iniciarCon = true;
         MetodosGlbRepository MtGlb;
 
-        private void EscribeLog(string newRow)
+        public ProcessInfo()
         {
-            string contenido = "";
-            try
+            if (!Directory.Exists(path))
             {
-                StreamReader sr = new StreamReader(path + archivo, true);
-                contenido = sr.ReadToEnd();
-                sr.Dispose();
-                sr.Close();
-                using (StreamWriter file = new StreamWriter(path + "WindowsService_Temporal.txt", true))
+                Directory.CreateDirectory(path);
+                if (!File.Exists(path + archivo))
                 {
-                    file.WriteLine(newRow); //se agrega información al documento
-                    file.WriteLine(contenido);
-                    file.Dispose();
-                    file.Close();
+                    File.CreateText(path + archivo);
                 }
-                File.Delete(path + archivo);
-                //Renombrar archivo
-                File.Move(path + "WindowsService_Temporal.txt", path + archivo);
             }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine(ex);
-            }
-
         }
-        public void ExecuteProcess()
+
+        public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin)
         {
             int TiempoAtras2 = 0;
             TiempoAtras2 = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
@@ -147,9 +133,8 @@ namespace ServiceTelepeaje.Logic
                 //{
                 //    if (MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows.Count > 0)
                 //        H_inicio_turno = Convert.ToDateTime(MtGlb.oDataRowSqlServer["DATE_TRANSACTION"]).ToString("yyyy/MM/dd HH:mm:ss");
-                //}
-                else
-                    H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
+                //}                else
+                H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
                 int TiempoAtras = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
                 H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddHours(-TiempoAtras).ToString("yyyy/MM/dd HH:mm:ss");
                 //ORACLE
@@ -161,8 +146,11 @@ namespace ServiceTelepeaje.Logic
 
                             "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
                             "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
-                            "WHERE" +
-                            "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
+                            "WHERE" 
+                            +
+                            //"(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  "
+                            "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
+                            +
                             "AND  ID_PAIEMENT  = 15 " +
                             "AND (TRANSACTION.Id_Voie = '1' " +
                             "OR TRANSACTION.Id_Voie = '2' " +
@@ -443,9 +431,10 @@ namespace ServiceTelepeaje.Logic
                                                                                 Convert.ToDateTime(LocalTime.ToString("yyyy-MM-ddTHH:mm:ss")),
                                                                                 Convert.ToByte(TipoVehiculo),
                                                                                 Convert.ToString(Cuerpo));
-                                            //resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
+                                            resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
                                             if (resultado == 1)
                                             {
+                                                this.EscribeLog("se inserto " + Tarjeta + " Fecha: "+ Fecha +" nEvento: "+ MtGlb.oDataRow["EVENT_NUMBER"].ToString());
                                                 if (MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == "@" || MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == ":")
                                                 {
                                                     StrQuerys = "insert into pn_importacion_wsIndra(" +
@@ -495,7 +484,7 @@ namespace ServiceTelepeaje.Logic
                         //    file.Close();
                         //}
                         this.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.");
-                        timProcess.Enabled = false;
+                        //timProcess.Enabled = false;
                     }
                 }
 
@@ -509,7 +498,7 @@ namespace ServiceTelepeaje.Logic
                     //    file.Close();
                     //}
                     this.EscribeLog("Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString());
-                    timProcess.Enabled = false;
+                    //timProcess.Enabled = false;
                 }
                 else if (monto_detec)
                 {
@@ -520,7 +509,7 @@ namespace ServiceTelepeaje.Logic
                     //    file.Close();
                     //}
                     this.EscribeLog("Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString());
-                    timProcess.Enabled = false;
+                    //timProcess.Enabled = false;
                 }
                 else if (CarrilInex)
                 {
@@ -531,7 +520,7 @@ namespace ServiceTelepeaje.Logic
                     //    file.Close();
                     //}
                     this.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.");
-                    timProcess.Enabled = false;
+                    //timProcess.Enabled = false;
                 }
                 else if (event_numbool)
                 {
@@ -542,7 +531,7 @@ namespace ServiceTelepeaje.Logic
                     //    file.Close();
                     //}
                     this.EscribeLog("EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"]);
-                    timProcess.Enabled = false;
+                    //timProcess.Enabled = false;
                 }
                 else
                 {
@@ -553,7 +542,7 @@ namespace ServiceTelepeaje.Logic
                     //    file.Close();
                     //}
                     this.EscribeLog("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.");
-                    timProcess.Enabled = true;
+                    //timProcess.Enabled = true;
                 }
 
 
@@ -567,7 +556,7 @@ namespace ServiceTelepeaje.Logic
                 //    file.Close();
                 //}
                 this.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
-                timProcess.Enabled = false;
+                //timProcess.Enabled = false;
             }
             finally
             {
@@ -578,5 +567,43 @@ namespace ServiceTelepeaje.Logic
                 //MtGlb.ExitConnectionProsis();
             }
         }
+        public void EscribeLog(string newRow)
+        {
+            string contenido = "";
+            try
+            {
+                StreamReader sr = new StreamReader(path + archivo, true);
+                contenido = sr.ReadToEnd();
+                sr.Dispose();
+                sr.Close();
+                using (StreamWriter file = new StreamWriter(path + "WindowsService_Temporal.txt", true))
+                {
+                    file.WriteLine(newRow); //se agrega información al documento
+                    file.WriteLine(contenido);
+                    file.Dispose();
+                    file.Close();
+                }
+                File.Delete(path + archivo);
+                //Renombrar archivo
+                File.Move(path + "WindowsService_Temporal.txt", path + archivo);
+                
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex);
+            }
+        }
+
+        public string mostrarInformacion()
+        {
+            StreamReader sr = new StreamReader(path + archivo, true);
+            string contenido = sr.ReadToEnd();
+            return contenido;
+        }
+
+
+       
+
     }
 }

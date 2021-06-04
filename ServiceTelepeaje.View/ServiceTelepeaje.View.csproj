@@ -6,4 +6,8 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ServiceTelepeaje.Logic\ServiceTelepeaje.Logic.csproj" />
+  </ItemGroup>
+
 </Project>
