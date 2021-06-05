@@ -541,7 +541,7 @@ namespace WindowsServiceTelepeaje
                     //    file.Dispose();
                     //    file.Close();
                     //}
-                    this.EscribeLog("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.");
+                    this.EscribeLog("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " +  _count.ToString() + " registros.");
                     //timProcess.Enabled = true;
                 }
 

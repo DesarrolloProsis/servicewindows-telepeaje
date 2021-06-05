@@ -77,11 +77,6 @@ namespace WindowsServiceTelepeaje
 
         private void ExecuteProcess()
         {
-            int TiempoAtras2 = 0;
-            TiempoAtras2 = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
-            
-            this.EscribeLog("Tiempo atras"+ TiempoAtras2);
-
 
             try
             {
@@ -94,7 +89,7 @@ namespace WindowsServiceTelepeaje
                 //    file.Dispose();
                 //    file.Close();
                 //}
-                this.EscribeLog("== Inicio ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString());
+                this.EscribeLog("=Inicia ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString());
 
                 /***********************************************************************************************************/
 
@@ -173,9 +168,10 @@ namespace WindowsServiceTelepeaje
                 //    if (MtGlb.DsSqlServer.Tables["DATE_TRANSACTION"].Rows.Count > 0)
                 //        H_inicio_turno = Convert.ToDateTime(MtGlb.oDataRowSqlServer["DATE_TRANSACTION"]).ToString("yyyy/MM/dd HH:mm:ss");
                 //}                else
-                    H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
+                H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
+                //H_inicio_turno = Convert.ToDateTime("2018/12/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
                 int TiempoAtras = Convert.ToInt32( ConfigurationManager.AppSettings["tiempoAtras"]);
-                H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddHours(-TiempoAtras).ToString("yyyy/MM/dd HH:mm:ss");
+                H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddMinutes(-TiempoAtras).ToString("yyyy/MM/dd HH:mm:ss");
                 //ORACLE
                 StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
                             "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
@@ -188,6 +184,7 @@ namespace WindowsServiceTelepeaje
                             "WHERE" +
                             "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
                             "AND  ID_PAIEMENT  = 15 " +
+                            //"AND ROWNUM <= 10000"+//borrar esta linea
                             "AND (TRANSACTION.Id_Voie = '1' " +
                             "OR TRANSACTION.Id_Voie = '2' " +
                             "OR TRANSACTION.Id_Voie = '3' " +
