@@ -126,11 +126,13 @@ namespace WindowsServiceTelepeaje.Service
         /// <param name="NameTable"></param>
         /// <returns></returns>
         /// 
-        public int QueryDataCount(string myExecuteQuery )
+        public int QueryDataCount(string myExecuteQuery)
         {  
                 OracleCommand command = new OracleCommand(myExecuteQuery, ConnectionOracle());
-                command.Connection.Open();
-                return command.ExecuteNonQuery();       
+            //command.Connection.Open();
+            
+            int count = int.Parse(command.ExecuteScalar().ToString());
+            return count;       
                 
         }
         public bool QueryDataSet(string Query, string NameTable)

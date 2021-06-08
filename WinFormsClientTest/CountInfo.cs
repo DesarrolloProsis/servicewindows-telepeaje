@@ -12,7 +12,7 @@ namespace ServiceTelepeaje.Logic
     {
         MetodosGlbRepository MtGlb;
         private ApplicationDbContext db = new ApplicationDbContext();
-        public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin , out int conteoSql, out int conteoOracle)
+        public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin , out int conteoSql, out Int32 conteoOracle)
         {
             string querySql;
             string queryOracle;
@@ -21,7 +21,7 @@ namespace ServiceTelepeaje.Logic
                 querySql = @"SELECT * FROM [ProsisDBv1_1].[dbo].[pn_importacion_wsIndra]" +
                        "WHERE (DATE_TRANSACTION between '" + Convert.ToDateTime(fechaInicio).ToString("yyyy-MM-dd HH:mm:ss") + "'" +
                        "and '" + Convert.ToDateTime(fechaFin).ToString("yyyy-MM-dd HH:mm:ss") + "')";
-                queryOracle = @"SELECT count(*) FROM TRANSACTION " +
+                queryOracle = @"SELECT COUNT(0) FROM TRANSACTION " +
                                 "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
                                 "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE WHERE" +
                                 "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') " +
@@ -31,8 +31,7 @@ namespace ServiceTelepeaje.Logic
                                 "OR TRANSACTION.Id_Voie = '2' " +
                                 "OR TRANSACTION.Id_Voie = '3' " +
                                 "OR TRANSACTION.Id_Voie = '4' " +
-                                "OR TRANSACTION.Id_Voie = 'X') " +
-                                "ORDER BY DATE_TRANSACTION ";
+                                "OR TRANSACTION.Id_Voie = 'X') ";
                 var contadorsql = db.pn_importacion_wsIndra.SqlQuery(querySql).Count();
                 conteoSql = contadorsql;
                 MtGlb = new MetodosGlbRepository();

@@ -40,7 +40,7 @@ namespace WindowsServiceTelepeaje
             DateTime fechaFin = DTTermino.Value;     
             LogInfo.Text = "Iniciando";
             countInfo.ExecuteProcess(fechaInicio, fechaFin ,out int conteoSql, out int conteoOracle);
-            LogInfo.Text = "Oracle: " + " " + "SQL: " + conteoSql;
+            LogInfo.Text = "Oracle: " + conteoOracle + " " + "SQL: " + conteoSql;
         }
     }
 }
