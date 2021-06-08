@@ -35,11 +35,12 @@ namespace WindowsServiceTelepeaje
             this.label1 = new System.Windows.Forms.Label();
             this.DTFin = new System.Windows.Forms.Label();
             this.LogInfo = new System.Windows.Forms.TextBox();
+            this.Count = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Sincronizar
             // 
-            this.Sincronizar.Location = new System.Drawing.Point(82, 185);
+            this.Sincronizar.Location = new System.Drawing.Point(357, 169);
             this.Sincronizar.Name = "Sincronizar";
             this.Sincronizar.Size = new System.Drawing.Size(180, 58);
             this.Sincronizar.TabIndex = 0;
@@ -89,11 +90,22 @@ namespace WindowsServiceTelepeaje
             this.LogInfo.Size = new System.Drawing.Size(455, 234);
             this.LogInfo.TabIndex = 5;
             // 
+            // Count
+            // 
+            this.Count.Location = new System.Drawing.Point(82, 169);
+            this.Count.Name = "Count";
+            this.Count.Size = new System.Drawing.Size(180, 58);
+            this.Count.TabIndex = 6;
+            this.Count.Text = "Count";
+            this.Count.UseVisualStyleBackColor = true;
+            this.Count.Click += new System.EventHandler(this.Count_Click);
+            // 
             // VistaSincronizaTelepeaje
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(626, 521);
+            this.Controls.Add(this.Count);
             this.Controls.Add(this.LogInfo);
             this.Controls.Add(this.DTFin);
             this.Controls.Add(this.label1);
@@ -115,5 +127,6 @@ namespace WindowsServiceTelepeaje
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label DTFin;
         public System.Windows.Forms.TextBox LogInfo;
+        private System.Windows.Forms.Button Count;
     }
 }
