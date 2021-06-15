@@ -40,7 +40,6 @@ namespace WindowsServiceTelepeaje
             // 
             // Sincronizar
             // 
-            this.Sincronizar.Enabled = false;
             this.Sincronizar.Location = new System.Drawing.Point(357, 169);
             this.Sincronizar.Name = "Sincronizar";
             this.Sincronizar.Size = new System.Drawing.Size(180, 58);
