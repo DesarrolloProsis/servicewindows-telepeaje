@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinFormsClientTest;
 
 namespace WindowsServiceTelepeaje
 {
@@ -18,6 +19,8 @@ namespace WindowsServiceTelepeaje
             InitializeComponent();
             DTInicio.CustomFormat = "yyyy/MM/dd HH:mm:ss";
             DTTermino.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            var v = new HandlePlazas().getListaPlazas();
+            cbPlazas.DataSource = v;
 
         }
 
@@ -35,13 +38,49 @@ namespace WindowsServiceTelepeaje
 
         private void Count_Click(object sender, EventArgs e)
         {
-            CountInfo countInfo = new CountInfo(); 
-            DateTime fechaInicio = DTInicio.Value;
-            DateTime fechaFin = DTTermino.Value;     
-            LogInfo.Text = "Iniciando";
-            countInfo.ExecuteProcess(fechaInicio, fechaFin ,out int conteoSql, out int conteoOracle);
-            int resta = conteoOracle - conteoSql;
-            LogInfo.Text = "Oracle: " + conteoOracle + " " + "SQL: " + conteoSql + " Diferencia: " + resta;
+            try
+            {
+                CountInfo countInfo = new CountInfo();
+                DateTime fechaInicio = DTInicio.Value;
+                DateTime fechaFin = DTTermino.Value;
+                
+                LogInfo.Text = "Iniciando";
+                Count.Enabled = false;
+                Sincronizar.Enabled = false;
+                //countInfo.ExecuteProcess(fechaInicio, fechaFin, out int conteoSql, out int conteoOracle);
+                //int resta = conteoOracle - conteoSql;
+                //LogInfo.Text = "Oracle: " + conteoOracle + " " + "SQL: " + conteoSql + " Diferencia: " + resta;
+                PlazaEntity plazaSelected = (PlazaEntity)cbPlazas.SelectedItem;
+                LogInfo.Text = plazaSelected.IPService + " Con oracle: " + plazaSelected.OracleCon;
+
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                Count.Enabled = true;
+                Sincronizar.Enabled = true;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            
+               
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            PlazaEntity plazaSelected = (PlazaEntity)cbPlazas.SelectedItem;
+            LogInfo.Text = plazaSelected.IPService + " Con oracle: " +plazaSelected.OracleCon;
+        }
+
+        private void DTTermino_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

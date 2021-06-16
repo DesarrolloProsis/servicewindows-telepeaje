@@ -36,7 +36,7 @@ namespace ServiceTelepeaje.Logic
                 conteoSql = contadorsql;
                 MtGlb = new MetodosGlbRepository();
                 MtGlb.CrearConexionOracle();
-                var contadorOracle = MtGlb.QueryDataCount(queryOracle);
+                var contadorOracle = Convert.ToInt32( MtGlb.QueryDataCount(queryOracle));
                 conteoOracle = contadorOracle;
                 MtGlb.ExitConnectionOracle();
             }

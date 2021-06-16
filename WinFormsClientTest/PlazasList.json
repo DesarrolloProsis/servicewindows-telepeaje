@@ -1,0 +1,23 @@
+[
+  {
+    "Plazacobro": "05",
+    "Nombre": "queretaro",
+    "IPService": "",
+    "OracleCon": "",
+    "SqlCon": ""
+  },
+  {
+    "plazacobro": "05",
+    "nombre": "queretaro",
+    "serviceIP": "",
+    "OracleCon": "",
+    "sqlCon": ""
+  },
+  {
+    "plazacobro": "05",
+    "nombre": "queretaro",
+    "serviceIP": "",
+    "OracleCon": "",
+    "sqlCon": ""
+  }
+]
