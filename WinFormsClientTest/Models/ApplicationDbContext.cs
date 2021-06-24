@@ -1,15 +1,17 @@
+using System.Data.Entity;
+
 namespace WindowsServiceTelepeaje.Models
 {
-    using System;
-    using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-
     public partial class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext()
-            : base("name=ApplicationDbContext")
+            : base("name=ApplicationDbContext") //ApplicationDbContext cambiar esto
         {
+        }
+
+        public ApplicationDbContext(string CadenaConexion)
+        {
+            this.Database.Connection.ConnectionString = CadenaConexion;
         }
 
         public virtual DbSet<pn_importacion_wsIndra> pn_importacion_wsIndra { get; set; }

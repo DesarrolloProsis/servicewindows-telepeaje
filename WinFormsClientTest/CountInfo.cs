@@ -1,17 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WindowsServiceTelepeaje.Models;
-using WindowsServiceTelepeaje.Service;
+using WinFormsClientTest.Service;
 
 namespace ServiceTelepeaje.Logic
 {
+    
     public class CountInfo
     {
-        MetodosGlbRepository MtGlb;
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private MetodosGlbRepository MtGlb;
+        public CountInfo()
+        {
+            MtGlb = new MetodosGlbRepository();
+        }
+        
+        static string cadenaConexion = "data source=.;initial catalog=ProsisDBv1_1;user id=SA;password=CAPUFE;MultipleActiveResultSets=True;App=EntityFramework";
+        private ApplicationDbContext db = new ApplicationDbContext(cadenaConexion);
         public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin , out int conteoSql, out Int32 conteoOracle)
         {
             string querySql;
@@ -45,6 +49,17 @@ namespace ServiceTelepeaje.Logic
 
                 throw;
             }         
+        }
+
+
+        public int CuentaTransaccionesSQl()
+        {
+            return 0;
+        }
+
+        public int cuentaTransaccionesOracle()
+        {
+            return 0;
         }
     }
 }

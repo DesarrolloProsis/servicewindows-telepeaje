@@ -17,7 +17,6 @@ namespace WinFormsClientTest
                 lista = JsonConvert.DeserializeObject<List<PlazaEntity>>(json);
                 Console.WriteLine(lista);
             }
-
             return lista;
         }
     }

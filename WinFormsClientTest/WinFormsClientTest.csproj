@@ -101,6 +101,13 @@
     <Compile Include="CountInfo.cs" />
     <Compile Include="HandlePlazas.cs" />
     <Compile Include="Entities\PlazaEntity.cs" />
+    <Compile Include="LogServiceTelepeage.cs" />
+    <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\pn_importacion_wsIndra.cs" />
+    <Compile Include="Models\Type_Carril.cs" />
+    <Compile Include="Models\Type_Delegacion.cs" />
+    <Compile Include="Models\Type_Operadores.cs" />
+    <Compile Include="Models\Type_Plaza.cs" />
     <Compile Include="ProcessInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,6 +116,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Service\MetodosGlbRepository.cs" />
     <Compile Include="VistaSincronizaTelepeaje.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,12 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WindowsServiceTelepeaje\WindowsServiceTelepeaje.csproj">
-      <Project>{8056f4d8-9d8d-4e3a-91f9-ddbc71aaf368}</Project>
-      <Name>WindowsServiceTelepeaje</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WinFormsClientTest.ServiceReference1 {
+namespace WindowsServiceTelepeaje.ServiceReference1 {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -17,10 +17,10 @@ namespace WinFormsClientTest.ServiceReference1 {
         
         // CODEGEN: Se está generando un contrato de mensaje, ya que el espacio de nombres de contenedor (urn:transaction) del mensaje MoveTransactionsUpRequest no coincide con el valor predeterminado (http://www.genivia.com/mashup.wsdl)
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        WinFormsClientTest.ServiceReference1.MoveTransactionsUpResponse MoveTransactionsUp(WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest request);
+        WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse MoveTransactionsUp(WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        System.Threading.Tasks.Task<WinFormsClientTest.ServiceReference1.MoveTransactionsUpResponse> MoveTransactionsUpAsync(WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest request);
+        System.Threading.Tasks.Task<WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse> MoveTransactionsUpAsync(WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -164,12 +164,12 @@ namespace WinFormsClientTest.ServiceReference1 {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface PortTypeChannel : WinFormsClientTest.ServiceReference1.PortType, System.ServiceModel.IClientChannel {
+    public interface PortTypeChannel : WindowsServiceTelepeaje.ServiceReference1.PortType, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class PortTypeClient : System.ServiceModel.ClientBase<WinFormsClientTest.ServiceReference1.PortType>, WinFormsClientTest.ServiceReference1.PortType {
+    public partial class PortTypeClient : System.ServiceModel.ClientBase<WindowsServiceTelepeaje.ServiceReference1.PortType>, WindowsServiceTelepeaje.ServiceReference1.PortType {
         
         public PortTypeClient() {
         }
@@ -191,7 +191,7 @@ namespace WinFormsClientTest.ServiceReference1 {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        WinFormsClientTest.ServiceReference1.MoveTransactionsUpResponse WinFormsClientTest.ServiceReference1.PortType.MoveTransactionsUp(WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest request) {
+        WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse WindowsServiceTelepeaje.ServiceReference1.PortType.MoveTransactionsUp(WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest request) {
             return base.Channel.MoveTransactionsUp(request);
         }
         
@@ -215,10 +215,10 @@ namespace WinFormsClientTest.ServiceReference1 {
                     System.DateTime UtcTime, 
                     System.DateTime LocalTime, 
                     byte tipoVehiculo, 
-                    string Cuerpo, 
-                    string nombreLista, 
-                    System.DateTime fechaCargaLista) {
-            WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest inValue = new WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest();
+                    string Cuerpo) { 
+                    //string nombreLista, 
+                    //System.DateTime fechaCargaLista) {
+            WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest inValue = new WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest();
             inValue.secuencial = secuencial;
             inValue.carril = carril;
             inValue.Fecha = Fecha;
@@ -239,18 +239,18 @@ namespace WinFormsClientTest.ServiceReference1 {
             inValue.LocalTime = LocalTime;
             inValue.tipoVehiculo = tipoVehiculo;
             inValue.Cuerpo = Cuerpo;
-            inValue.nombreLista = nombreLista;
-            inValue.fechaCargaLista = fechaCargaLista;
-            WinFormsClientTest.ServiceReference1.MoveTransactionsUpResponse retVal = ((WinFormsClientTest.ServiceReference1.PortType)(this)).MoveTransactionsUp(inValue);
+            //inValue.nombreLista = nombreLista;
+            //inValue.fechaCargaLista = fechaCargaLista;
+            WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse retVal = ((WindowsServiceTelepeaje.ServiceReference1.PortType)(this)).MoveTransactionsUp(inValue);
             return retVal.InsertaTranResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<WinFormsClientTest.ServiceReference1.MoveTransactionsUpResponse> WinFormsClientTest.ServiceReference1.PortType.MoveTransactionsUpAsync(WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest request) {
+        System.Threading.Tasks.Task<WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse> WindowsServiceTelepeaje.ServiceReference1.PortType.MoveTransactionsUpAsync(WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest request) {
             return base.Channel.MoveTransactionsUpAsync(request);
         }
         
-        public System.Threading.Tasks.Task<WinFormsClientTest.ServiceReference1.MoveTransactionsUpResponse> MoveTransactionsUpAsync(
+        public System.Threading.Tasks.Task<WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse> MoveTransactionsUpAsync(
                     int secuencial, 
                     int carril, 
                     string Fecha, 
@@ -273,7 +273,7 @@ namespace WinFormsClientTest.ServiceReference1 {
                     string Cuerpo, 
                     string nombreLista, 
                     System.DateTime fechaCargaLista) {
-            WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest inValue = new WinFormsClientTest.ServiceReference1.MoveTransactionsUpRequest();
+            WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest inValue = new WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest();
             inValue.secuencial = secuencial;
             inValue.carril = carril;
             inValue.Fecha = Fecha;
@@ -296,7 +296,7 @@ namespace WinFormsClientTest.ServiceReference1 {
             inValue.Cuerpo = Cuerpo;
             inValue.nombreLista = nombreLista;
             inValue.fechaCargaLista = fechaCargaLista;
-            return ((WinFormsClientTest.ServiceReference1.PortType)(this)).MoveTransactionsUpAsync(inValue);
+            return ((WindowsServiceTelepeaje.ServiceReference1.PortType)(this)).MoveTransactionsUpAsync(inValue);
         }
     }
 }

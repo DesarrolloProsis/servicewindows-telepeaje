@@ -1,14 +1,11 @@
 ﻿using Oracle.DataAccess.Client;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiceTelepeaje.Logic
+namespace WinFormsClientTest.Service
 {
     public class MetodosGlbRepository
     {
@@ -25,7 +22,7 @@ namespace ServiceTelepeaje.Logic
 
         private static readonly string ConStrOracle = ConfigurationManager.ConnectionStrings["OracleSql"].ConnectionString;
         private static OracleConnection connectionOracle;
-
+        
         public void CrearConexionOracle()
         {
             connectionOracle = new OracleConnection(ConStrOracle);
@@ -125,6 +122,16 @@ namespace ServiceTelepeaje.Logic
         /// <param name="Query"></param>
         /// <param name="NameTable"></param>
         /// <returns></returns>
+        /// 
+        public Task<object> QueryDataCount(string myExecuteQuery)
+        {  
+                OracleCommand command = new OracleCommand(myExecuteQuery, ConnectionOracle());
+            //command.Connection.Open();
+            
+            return command.ExecuteScalarAsync();
+                   
+                
+        }
         public bool QueryDataSet(string Query, string NameTable)
         {
             if (Ds.Tables.Count != 0)
