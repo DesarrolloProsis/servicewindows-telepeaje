@@ -39,7 +39,7 @@ namespace ServiceTelepeaje.Logic
                 var contadorsql = db.pn_importacion_wsIndra.SqlQuery(querySql).Count();
                 conteoSql = contadorsql;
                 MtGlb = new MetodosGlbRepository();
-                MtGlb.CrearConexionOracle();
+                MtGlb.CrearConexionOracle("");
                 var contadorOracle = Convert.ToInt32( MtGlb.QueryDataCount(queryOracle));
                 conteoOracle = contadorOracle;
                 MtGlb.ExitConnectionOracle();

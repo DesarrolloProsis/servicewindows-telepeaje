@@ -38,7 +38,7 @@ namespace WindowsServiceTelepeaje
                 if (iniciarCon)
                 {
                     MtGlb = new MetodosGlbRepository();
-                    MtGlb.CrearConexionOracle();
+                    MtGlb.CrearConexionOracle("");
                     iniciarCon = false;
                 }
                 var IdPlazaCobro = ConfigurationManager.AppSettings["plazacobro"];

@@ -20,14 +20,14 @@ namespace WinFormsClientTest.Service
         //private static readonly string ConStrProsis = ConfigurationManager.ConnectionStrings["PROSIS"].ConnectionString;
         //private static SqlConnection connectionProsis;  //Conexion para la migracion...
 
-        private static readonly string ConStrOracle = ConfigurationManager.ConnectionStrings["OracleSql"].ConnectionString;
+        //private static readonly string ConStrOracle = ConfigurationManager.ConnectionStrings["OracleSql"].ConnectionString;
         private static OracleConnection connectionOracle;
         
-        public void CrearConexionOracle()
+        public void CrearConexionOracle(string oracleStrinConnection)
         {
-            connectionOracle = new OracleConnection(ConStrOracle);
+            connectionOracle = new OracleConnection(oracleStrinConnection);
             //connectionProsis = new SqlConnection(ConStrProsis);
-            connectionDbContext = new SqlConnection(ConStrDbContext);
+            //connectionDbContext = new SqlConnection(ConStrDbContext);
         }
 
         /// <summary>

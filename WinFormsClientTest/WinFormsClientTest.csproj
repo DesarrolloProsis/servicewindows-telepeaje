@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CountInfo.cs" />
+    <Compile Include="CuentaInformación.cs" />
     <Compile Include="HandlePlazas.cs" />
     <Compile Include="Entities\PlazaEntity.cs" />
     <Compile Include="LogServiceTelepeage.cs" />
