@@ -47,7 +47,8 @@ namespace WinFormsClientTest
                                 "OR TRANSACTION.Id_Voie = 'X') ";
                 MetodosGlbRepository MtGlb = new MetodosGlbRepository();
                 MtGlb.CrearConexionOracle(stringConnection);
-                var contadorOracle = Convert.ToInt32(MtGlb.QueryDataCount(queryOracle));
+                LogServiceTelepeage.EscribeLog(MtGlb.QueryDataCount(queryOracle).Result.ToString());
+                var contadorOracle = Convert.ToInt32(MtGlb.QueryDataCount(queryOracle).Result.ToString());
                 MtGlb.ExitConnectionOracle();
                 return contadorOracle;
             }
