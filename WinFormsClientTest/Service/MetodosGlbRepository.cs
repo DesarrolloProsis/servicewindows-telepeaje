@@ -1,6 +1,5 @@
 ﻿using Oracle.DataAccess.Client;
 using System;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace WinFormsClientTest.Service
         public DataRow oDataRowSqlServer;
         public DataRow oDataRow;
 
-        private static readonly string ConStrDbContext = ConfigurationManager.ConnectionStrings["ApplicationDbContext"].ConnectionString;
+        //private static readonly string ConStrDbContext = ConfigurationManager.ConnectionStrings["ApplicationDbContext"].ConnectionString;
         private static SqlConnection connectionDbContext;
 
         //private static readonly string ConStrProsis = ConfigurationManager.ConnectionStrings["PROSIS"].ConnectionString;
@@ -23,11 +22,11 @@ namespace WinFormsClientTest.Service
         //private static readonly string ConStrOracle = ConfigurationManager.ConnectionStrings["OracleSql"].ConnectionString;
         private static OracleConnection connectionOracle;
         
-        public void CrearConexionOracle(string oracleStrinConnection)
+        public void CrearConexionOracle(PlazaEntity PlazaEntity)
         {
-            connectionOracle = new OracleConnection(oracleStrinConnection);
+            connectionOracle = new OracleConnection(PlazaEntity.OracleCon);
             //connectionProsis = new SqlConnection(ConStrProsis);
-            //connectionDbContext = new SqlConnection(ConStrDbContext);
+            connectionDbContext = new SqlConnection(PlazaEntity.SqlCon);
         }
 
         /// <summary>
@@ -197,7 +196,7 @@ namespace WinFormsClientTest.Service
 
         /**************************************************************/
 
-        public static SqlConnection ConnectionDbContext()
+        public static SqlConnection ConnectionDbContext()//se usa?
         {
             if (connectionDbContext.State == ConnectionState.Closed)
                 connectionDbContext.Open();

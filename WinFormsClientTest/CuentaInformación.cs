@@ -7,11 +7,16 @@ namespace WinFormsClientTest
 {
     public class CuentaInformación
     {
+        PlazaEntity PlazaEntity;
+        public CuentaInformación(PlazaEntity PlazaEntity)
+        {
+            this.PlazaEntity = PlazaEntity;
+        }
 
-        public int CuentaTransaccionesSQLServer(DateTime fechaInicio, DateTime fechaFin, string cadenaConexion)
+        public int CuentaTransaccionesSQLServer(DateTime fechaInicio, DateTime fechaFin)
         {
             //string cadenaConexion = "data source=.;initial catalog=ProsisDBv1_1;user id=SA;password=CAPUFE;MultipleActiveResultSets=True;App=EntityFramework";
-            ApplicationDbContext db = new ApplicationDbContext(cadenaConexion);
+            ApplicationDbContext db = new ApplicationDbContext(this.PlazaEntity.SqlCon);
             string querySql;
             try
             {
@@ -29,7 +34,7 @@ namespace WinFormsClientTest
             }
         }
 
-        public Int32 CuentaTransaccionesOracle(DateTime fechaInicio, DateTime fechaFin, string stringConnection)
+        public Int32 CuentaTransaccionesOracle(DateTime fechaInicio, DateTime fechaFin)
         {
             string queryOracle;
             try
@@ -46,9 +51,9 @@ namespace WinFormsClientTest
                                 "OR TRANSACTION.Id_Voie = '4' " +
                                 "OR TRANSACTION.Id_Voie = 'X') ";
                 MetodosGlbRepository MtGlb = new MetodosGlbRepository();
-                MtGlb.CrearConexionOracle(stringConnection);
-                LogServiceTelepeage.EscribeLog(MtGlb.QueryDataCount(queryOracle).Result.ToString());
+                MtGlb.CrearConexionOracle(this.PlazaEntity);
                 var contadorOracle = Convert.ToInt32(MtGlb.QueryDataCount(queryOracle).Result.ToString());
+                LogServiceTelepeage.EscribeLog("Cuenta oracle" +contadorOracle);             
                 MtGlb.ExitConnectionOracle();
                 return contadorOracle;
             }
@@ -63,9 +68,9 @@ namespace WinFormsClientTest
 
         public string MuestraInformacion(DateTime fechaInicio, DateTime fechaFin, PlazaEntity PlazaEntidad)
         {
-            int sqlCount = this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin, PlazaEntidad.SqlCon);
+            int sqlCount = this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin);
             Console.WriteLine("bu");
-            int oracleCount = this.CuentaTransaccionesOracle(fechaInicio, fechaFin, PlazaEntidad.OracleCon);
+            int oracleCount = this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
             int diferencia = oracleCount-sqlCount;
             return "SQL Registros: " + sqlCount + "Oracle Registros: " + oracleCount + "Diferencia: " + diferencia;
         }

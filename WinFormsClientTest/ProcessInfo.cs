@@ -12,14 +12,16 @@ namespace WindowsServiceTelepeaje
     {
         private ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
 
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private ApplicationDbContext db;
+        public PlazaEntity PlazaEntity { get; set; }
         private int i = 0;
         private bool iniciarCon = true;
         MetodosGlbRepository MtGlb;
 
-        public ProcessInfo()
+        public ProcessInfo(PlazaEntity PlazaEntity)
         {
-           
+            this.PlazaEntity = PlazaEntity;
+            db = new ApplicationDbContext(this.PlazaEntity.SqlCon);
         }
 
         public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin)
@@ -38,7 +40,7 @@ namespace WindowsServiceTelepeaje
                 if (iniciarCon)
                 {
                     MtGlb = new MetodosGlbRepository();
-                    MtGlb.CrearConexionOracle("");
+                    MtGlb.CrearConexionOracle(this.PlazaEntity);
                     iniciarCon = false;
                 }
                 var IdPlazaCobro = ConfigurationManager.AppSettings["plazacobro"];
