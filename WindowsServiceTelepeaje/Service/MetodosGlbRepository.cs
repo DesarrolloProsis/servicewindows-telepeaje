@@ -10,78 +10,25 @@ using System.Threading.Tasks;
 
 namespace WindowsServiceTelepeaje.Service
 {
-    class MetodosGlbRepository
+    public class MetodosGlbRepository
     {
-        public DataSet Ds = new DataSet();
-        public DataSet DsSqlServer = new DataSet();
-        public DataRow oDataRowSqlServer;
-        public DataRow oDataRow;
+        public readonly DataSet Ds = new DataSet();
+        public readonly DataSet DsSqlServer = new DataSet();
+        public DataRow oDataRowSqlServer { get; set; }
+        public DataRow oDataRow { get; set; }
 
         private static readonly string ConStrDbContext = ConfigurationManager.ConnectionStrings["ApplicationDbContext"].ConnectionString;
-        private static SqlConnection connectionDbContext;
+        private SqlConnection connectionDbContext;
 
-        //private static readonly string ConStrProsis = ConfigurationManager.ConnectionStrings["PROSIS"].ConnectionString;
-        //private static SqlConnection connectionProsis;  //Conexion para la migracion...
+        private readonly string ConStrOracle = ConfigurationManager.ConnectionStrings["OracleSql"].ConnectionString;
+        private OracleConnection connectionOracle;
 
-        private static readonly string ConStrOracle = ConfigurationManager.ConnectionStrings["OracleSql"].ConnectionString;
-        private static OracleConnection connectionOracle;
-        
         public void CrearConexionOracle()
         {
             connectionOracle = new OracleConnection(ConStrOracle);
-            //connectionProsis = new SqlConnection(ConStrProsis);
             connectionDbContext = new SqlConnection(ConStrDbContext);
         }
 
-        /// <summary>
-        /// Ejecuta un query y lo agrega a un DataSet (Sql Server)
-        /// </summary>
-        /// <param name="Query"></param>
-        /// <param name="NameTable"></param>
-        /// <returns></returns>
-        //public bool QueryDataSet_SqlServer(string Query, string NameTable)
-        //{
-        //    bool Rpt = false;
-
-        //    using (SqlCommand Cmd = new SqlCommand(Query, ConnectionProsis()))
-        //    {
-        //        using (SqlDataAdapter Da = new SqlDataAdapter(Cmd))
-        //        {
-        //            if (DsSqlServer.Tables.Count != 0)
-        //                DsSqlServer.Clear();
-
-        //            int iPosicionFilaActual = 0;
-        //            try
-        //            {
-        //                Da.Fill(DsSqlServer, NameTable);
-        //                if (DsSqlServer.Tables[NameTable].Rows.Count > 0)
-        //                {
-        //                    oDataRowSqlServer = DsSqlServer.Tables[NameTable].Rows[iPosicionFilaActual];
-        //                    Rpt = true;
-        //                }
-        //                else
-        //                    Rpt = false;
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Rpt = false;
-        //            }
-        //            finally
-        //            {
-        //                Cmd.Dispose();
-        //            }
-        //        }
-        //    }
-
-        //    return Rpt;
-        //}
-
-        /// <summary>
-        /// Ejecuta un query y lo agrega a un DataSet (Sql Server) ProsisDBv1_1
-        /// </summary>
-        /// <param name="Query"></param>
-        /// <param name="NameTable"></param>
-        /// <returns></returns>
         public bool QueryDataSet_SqlServerDBv1_1(string Query, string NameTable)
         {
             bool Rpt = false;
@@ -119,12 +66,6 @@ namespace WindowsServiceTelepeaje.Service
             return Rpt;
         }
 
-        /// <summary>
-        /// Ejecuta un query y lo agrega a un DataSet
-        /// </summary>
-        /// <param name="Query"></param>
-        /// <param name="NameTable"></param>
-        /// <returns></returns>
         public bool QueryDataSet(string Query, string NameTable)
         {
             if (Ds.Tables.Count != 0)
@@ -159,11 +100,6 @@ namespace WindowsServiceTelepeaje.Service
             return _return;
         }
 
-        /// <summary>
-        /// Inserta en la tabla especificado un query en sql server
-        /// </summary>
-        /// <param name="Query"></param>
-        /// <returns></returns>
         public bool InsertQuerySqlServer(string Query)
         {
             bool rpt = false;
@@ -190,7 +126,7 @@ namespace WindowsServiceTelepeaje.Service
 
         /**************************************************************/
 
-        public static SqlConnection ConnectionDbContext()
+        public SqlConnection ConnectionDbContext()
         {
             if (connectionDbContext.State == ConnectionState.Closed)
                 connectionDbContext.Open();
@@ -203,20 +139,7 @@ namespace WindowsServiceTelepeaje.Service
             connectionDbContext.Close();
         }
 
-        //public static SqlConnection ConnectionProsis()
-        //{
-        //    if (connectionProsis.State == ConnectionState.Closed)
-        //        connectionProsis.Open();
-
-        //    return connectionProsis;
-        //}
-
-        //public void ExitConnectionProsis()
-        //{
-        //    connectionProsis.Close();
-        //}
-
-        public static OracleConnection ConnectionOracle()
+        public OracleConnection ConnectionOracle()
         {
             if (connectionOracle.State == ConnectionState.Closed)
                 connectionOracle.Open();
