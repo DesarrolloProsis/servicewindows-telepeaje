@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.ServiceModel;
 using WindowsServiceTelepeaje.Models;
 using WinFormsClientTest;
 using WinFormsClientTest.Service;
@@ -10,8 +11,8 @@ namespace WindowsServiceTelepeaje
 {
     public class ProcessInfo
     {
-        private ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
-
+        private ServiceReference1.PortTypeClient Ws;
+        
         private ApplicationDbContext db;
         public PlazaEntity PlazaEntity { get; set; }
         private int i = 0;
@@ -20,16 +21,21 @@ namespace WindowsServiceTelepeaje
 
         public ProcessInfo(PlazaEntity PlazaEntity)
         {
+            BasicHttpBinding binding = new BasicHttpBinding();
+            Ws = new ServiceReference1.PortTypeClient();
+            //Ws.Endpoint.Address = new EndpointAddress("http://192.168.0.1:1212");
             this.PlazaEntity = PlazaEntity;
+            Ws.Endpoint.Address = new EndpointAddress(PlazaEntity.IPService);
+            
             db = new ApplicationDbContext(this.PlazaEntity.SqlCon);
         }
 
         public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin)
         {
-            int TiempoAtras2 = 0;
-            TiempoAtras2 = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
+            //int TiempoAtras2 = 0;
+            //TiempoAtras2 = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
 
-            LogServiceTelepeage.EscribeLog("Tiempo atras" + TiempoAtras2);
+            //LogServiceTelepeage.EscribeLog("Tiempo atras" + TiempoAtras2);
 
 
             try
@@ -43,7 +49,7 @@ namespace WindowsServiceTelepeaje
                     MtGlb.CrearConexionOracle(this.PlazaEntity);
                     iniciarCon = false;
                 }
-                var IdPlazaCobro = ConfigurationManager.AppSettings["plazacobro"];
+                var IdPlazaCobro = this.PlazaEntity.plazacobro; //ConfigurationManager.AppSettings["plazacobro"];
 
                 string StrQuerys;
 

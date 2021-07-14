@@ -2,21 +2,21 @@
   {
     "Plazacobro": "05",
     "Nombre": "queretaro",
-    "IPService": "ip quere",
+    "IPService": "http://192.168.0.1:1212",
     "OracleCon": "User Id=GEAINT;Password=GEAINT;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.3.23.221)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=GEAPROD)))",
     "SqlCon": "data source=.;initial catalog=ProsisDBv1_1;user id=SA;password=CAPUFE;MultipleActiveResultSets=True;App=EntityFramework"
   },
   {
     "plazacobro": "05",
     "nombre": "Puebla",
-    "IPService": "ip pue",
+    "IPService": "http://192.168.0.1:1212",
     "OracleCon": "oracle pue",
     "sqlCon": ""
   },
   {
     "plazacobro": "05",
     "nombre": "Local",
-    "IPService": "ip aca",
+    "IPService": "http://192.168.0.1:1212",
     "OracleCon": "User Id=GEADBA;Password=fgevorjvne;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.1.45)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=GEADBA)))",
     "sqlCon": "data source=.;initial catalog=ProsisDBv1_1;user id=SA;password=CAPUFE;MultipleActiveResultSets=True;App=EntityFramework"
   }
