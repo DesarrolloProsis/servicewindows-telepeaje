@@ -42,7 +42,7 @@ namespace WindowsServiceTelepeaje
         {
             timProcess = new System.Timers.Timer
             {
-                Interval = 300000
+                Interval = 3000
             };
             timProcess.Elapsed += new System.Timers.ElapsedEventHandler(TimProcess_Elapsed);
             timProcess.Enabled = true;
@@ -57,16 +57,17 @@ namespace WindowsServiceTelepeaje
 
         protected override void OnStop()
         {
-            this.EscribeLogFile("Se uso OnStop: " + DateTime.Now.ToString(), false);
+            this.EscribeLogFile("LogDetenerServicio.txt", "Se uso OnStop: " + DateTime.Now.ToString(), false);
         }
 
         private void ExecuteProcess()
         {
             try
             {
+                string nombreLog = this.GetNombreFile();
                 Int16 Rodada = 0;
                 i++;
-                this.EscribeLogFile("Se inicia Procesamiento : " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
+                this.EscribeLogFile(nombreLog, "Se inicia Procesamiento : " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
 
                 /***********************************************************************************************************/
 
@@ -481,7 +482,7 @@ namespace WindowsServiceTelepeaje
                                         }
 
                                         MtGlb.InsertQuerySqlServer(StrQuerys);
-
+                                        this.EscribeLogFile(nombreLog, "dato insertado", false);
                                         /*******************************************************************************************/
                                     }
                                 }
@@ -495,7 +496,7 @@ namespace WindowsServiceTelepeaje
                     }
                     else
                     {
-                        this.EscribeLogFile("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.", false);
+                        this.EscribeLogFile(nombreLog, "Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.", false);
                         timProcess.Enabled = false;
                     }
                 }
@@ -503,45 +504,42 @@ namespace WindowsServiceTelepeaje
                 // VALIDACIONES
                 if (tagempty)
                 {
-                    this.EscribeLogFile("Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
+                    this.EscribeLogFile(nombreLog, "Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
                     timProcess.Enabled = false;
                 }
                 else if (monto_detec)
                 {
-                    this.EscribeLogFile("Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
+                    this.EscribeLogFile(nombreLog, "Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
                     timProcess.Enabled = false;
                 }
                 else if (CarrilInex)
                 {
-                    this.EscribeLogFile("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.", false);
+                    this.EscribeLogFile(nombreLog, "Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.", false);
                     timProcess.Enabled = false;
                 }
                 else if (event_numbool)
                 {
-                    this.EscribeLogFile("EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"], false);
+                    this.EscribeLogFile(nombreLog, "EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"], false);
                     timProcess.Enabled = false;
                 }
                 else
                 {
-                    this.EscribeLogFile("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.", false);
+                    this.EscribeLogFile(nombreLog, "Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.", false);
                     timProcess.Enabled = true;
                 }
-            }
-            catch (Exception ex)
-            {
-                this.EscribeLogFile("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace, false);
-                timProcess.Enabled = false;
-            }
-            finally
-            {
-                this.EscribeLogFile("==========FIN DEL PROCESO PROSIS" + i.ToString() + " a las " + DateTime.Now.ToString(), false);
-
+                this.EscribeLogFile(nombreLog, "==========FIN DEL PROCESO PROSIS" + i.ToString() + " a las " + DateTime.Now.ToString(), false);
                 MtGlb.ExitConnectionDbContext();
                 MtGlb.ExitConnectionOracle();
             }
+            catch (Exception ex)
+            {
+                this.EscribeLogError("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
+                //timProcess.Enabled = false;//descomentar esta linea
+                timProcess.Enabled = true;
+            }
         }
 
-        public void EscribeLogFile(string Texto, bool singleFile)
+        public string GetNombreFile()
         {
             string Path = @"C:\LogServiceTel\";
             string PathFile;
@@ -549,14 +547,13 @@ namespace WindowsServiceTelepeaje
             {
                 Directory.CreateDirectory(Path);
             }
-            if (singleFile)
-            {
-                PathFile = Path + "Log.txt";
-            }
-            else
-            {
-                PathFile = Path + "Log" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt";
-            }
+
+            PathFile = Path + "Log" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt";
+            return PathFile;
+        }
+
+        public void EscribeLogFile(string PathFile, string Texto, bool singleFile)
+        {
             try
             {
                 //Open the File
@@ -564,6 +561,33 @@ namespace WindowsServiceTelepeaje
 
                 //Write
                 sw.Write(Texto);
+                //close the file
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
+        }
+
+        public void EscribeLogError(string Texto)
+        {
+            string Path = @"C:\LogServiceTel\";
+            string PathFile;
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+            PathFile = Path + "ErrorLog" + ".txt";
+
+            try
+            {
+                //Open the File
+                StreamWriter sw = new StreamWriter(PathFile, true, Encoding.ASCII);
+
+                //Write
+                sw.Write(Texto);
+                sw.Write("\\n");
                 //close the file
                 sw.Close();
             }
