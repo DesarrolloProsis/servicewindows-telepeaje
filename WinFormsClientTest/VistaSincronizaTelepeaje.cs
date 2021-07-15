@@ -30,41 +30,6 @@ namespace WindowsServiceTelepeaje
             LogInfo.Text = LogServiceTelepeage.MostrarInformacion();
         }
 
-        private void Count_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                //CountInfo countInfo = new CountInfo();
-                DateTime fechaInicio = DTInicio.Value;
-                DateTime fechaFin = DTTermino.Value;
-                
-                LogInfo.Text = "Iniciando";
-                Count.Enabled = false;
-                Sincronizar.Enabled = false;
-                //countInfo.ExecuteProcess(fechaInicio, fechaFin, out int conteoSql, out int conteoOracle);
-                //int resta = conteoOracle - conteoSql;
-                //LogInfo.Text = "Oracle: " + conteoOracle + " " + "SQL: " + conteoSql + " Diferencia: " + resta;
-                PlazaEntity plazaSelected = GetPlazaInformation();
-                LogInfo.Text = plazaSelected.IPService + " Con oracle: " + plazaSelected.OracleCon;
-
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine(ex);
-            }
-            finally
-            {
-                Count.Enabled = true;
-                Sincronizar.Enabled = true;
-            }
-        }
-
-
-        /*
-           PlazaEntity plazaSelected = (PlazaEntity)cbPlazas.SelectedItem;
-            LogInfo.Text = plazaSelected.IPService + " Con oracle: " +plazaSelected.OracleCon;
-         */
         private void DTTermino_ValueChanged(object sender, EventArgs e)
         {
 

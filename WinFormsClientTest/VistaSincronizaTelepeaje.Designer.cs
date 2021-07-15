@@ -35,12 +35,10 @@ namespace WindowsServiceTelepeaje
             this.label1 = new System.Windows.Forms.Label();
             this.DTFin = new System.Windows.Forms.Label();
             this.LogInfo = new System.Windows.Forms.TextBox();
-            this.Count = new System.Windows.Forms.Button();
             this.cbPlazas = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Sincronizar
@@ -96,16 +94,6 @@ namespace WindowsServiceTelepeaje
             this.LogInfo.Size = new System.Drawing.Size(297, 153);
             this.LogInfo.TabIndex = 5;
             // 
-            // Count
-            // 
-            this.Count.Location = new System.Drawing.Point(362, 20);
-            this.Count.Name = "Count";
-            this.Count.Size = new System.Drawing.Size(131, 50);
-            this.Count.TabIndex = 6;
-            this.Count.Text = "Count";
-            this.Count.UseVisualStyleBackColor = true;
-            this.Count.Click += new System.EventHandler(this.Count_Click);
-            // 
             // cbPlazas
             // 
             this.cbPlazas.FormattingEnabled = true;
@@ -134,35 +122,23 @@ namespace WindowsServiceTelepeaje
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(400, 248);
+            this.button1.Location = new System.Drawing.Point(362, 20);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(93, 23);
+            this.button1.Size = new System.Drawing.Size(131, 50);
             this.button1.TabIndex = 14;
-            this.button1.Text = "Cuenta sql";
+            this.button1.Text = "Cuenta";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(400, 289);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(93, 23);
-            this.button2.TabIndex = 15;
-            this.button2.Text = "Cuenta oracle";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // VistaSincronizaTelepeaje
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(583, 521);
-            this.Controls.Add(this.button2);
+            this.ClientSize = new System.Drawing.Size(645, 521);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbPlazas);
-            this.Controls.Add(this.Count);
             this.Controls.Add(this.LogInfo);
             this.Controls.Add(this.DTFin);
             this.Controls.Add(this.label1);
@@ -184,11 +160,9 @@ namespace WindowsServiceTelepeaje
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label DTFin;
         public System.Windows.Forms.TextBox LogInfo;
-        private System.Windows.Forms.Button Count;
         private System.Windows.Forms.ComboBox cbPlazas;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
     }
 }
