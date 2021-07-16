@@ -17,7 +17,7 @@
     "plazacobro": "05",
     "nombre": "Local",
     "IPService": "http://192.168.0.1:1212",
-    "OracleCon": "User Id=GEADBA;Password=fgeuorjvne;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.1.45)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=GEADBA)))",
+    "OracleCon": "User Id=GEADBA;Password=fgeuorjvne;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.1.45)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=GEAPROD)))",
     "sqlCon": "data source=.;initial catalog=ProsisDBv1_1;user id=SA;password=CAPUFE;MultipleActiveResultSets=True;App=EntityFramework"
   }
 ]

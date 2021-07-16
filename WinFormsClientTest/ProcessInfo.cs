@@ -11,8 +11,7 @@ namespace WindowsServiceTelepeaje
 {
     public class ProcessInfo
     {
-        private ServiceReference1.PortTypeClient Ws;
-        
+        private ServiceReference1.PortTypeClient Ws;        
         private ApplicationDbContext db;
         public PlazaEntity PlazaEntity { get; set; }
         private int i = 0;
@@ -23,21 +22,13 @@ namespace WindowsServiceTelepeaje
         {
             BasicHttpBinding binding = new BasicHttpBinding();
             Ws = new ServiceReference1.PortTypeClient();
-            //Ws.Endpoint.Address = new EndpointAddress("http://192.168.0.1:1212");
             this.PlazaEntity = PlazaEntity;
-            Ws.Endpoint.Address = new EndpointAddress(PlazaEntity.IPService);
-            
+            Ws.Endpoint.Address = new EndpointAddress(PlazaEntity.IPService);            
             db = new ApplicationDbContext(this.PlazaEntity.SqlCon);
         }
 
         public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin)
         {
-            //int TiempoAtras2 = 0;
-            //TiempoAtras2 = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
-
-            //LogServiceTelepeage.EscribeLog("Tiempo atras" + TiempoAtras2);
-
-
             try
             {
                 Int16 Rodada = 0;
@@ -50,14 +41,10 @@ namespace WindowsServiceTelepeaje
                     iniciarCon = false;
                 }
                 var IdPlazaCobro = this.PlazaEntity.plazacobro; //ConfigurationManager.AppSettings["plazacobro"];
-
                 string StrQuerys;
-
                 string H_inicio_turno = string.Empty;
-
                 double Dbl_registros = 0.0d;
                 double _count = 0.0d;
-                //---------------
                 int Secuencial;
                 int Carril = 0;
                 string Fecha;
@@ -68,7 +55,6 @@ namespace WindowsServiceTelepeaje
                 int Ejes = 0;
                 int Sec_piso;
                 Int16 Turno = 0;
-
                 int SecuencialTC;
                 int AutorizacionTC;
                 string TarjetaC;
@@ -78,7 +64,6 @@ namespace WindowsServiceTelepeaje
                 DateTime LocalTime;
                 int TipoVehiculo = 0;
                 string Cuerpo;
-
                 int resultado = 0;
                 bool CarrilInex = false;
                 bool event_numbool = false;
@@ -152,10 +137,8 @@ namespace WindowsServiceTelepeaje
                         for (int i = 0; i < MtGlb.Ds.Tables["TRANSACTION"].Rows.Count; i++)
                         {
                             MtGlb.oDataRow = MtGlb.Ds.Tables["TRANSACTION"].Rows[i];
-
                             var n1 = MtGlb.oDataRow["TRANSACTION_CPT1"].ToString();
                             var n2 = Convert.ToInt16(MtGlb.oDataRow["ACD_CLASS"].ToString());
-
                             if (MtGlb.oDataRow["TRANSACTION_CPT1"].ToString() == "000000" && Convert.ToInt16(MtGlb.oDataRow["ACD_CLASS"].ToString()) >= 1)
                             {
                                 monto_detec = true;
@@ -206,11 +189,7 @@ namespace WindowsServiceTelepeaje
 
 
                                             Fecha = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("dd-MM-yyyy");
-                                            //'<!--21-09-2007-->
-                                            //'<element name="Hora" type="xsd:string"/>
                                             Hora = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("HH:mm:ss");
-                                            //'<!--11:59:59-->
-                                            //'<element name="tarjeta" type="xsd:string"/>
                                             Tarjeta = MtGlb.oDataRow["CONTENU_ISO"].ToString().Substring(0, 15).Trim();
 
                                             if (string.IsNullOrEmpty(Tarjeta))
@@ -362,29 +341,13 @@ namespace WindowsServiceTelepeaje
                                             else if (MtGlb.oDataRow["Shift_number"].ToString() == "3")
                                                 Turno = 6;
 
-                                            //<element name="secuencialTC" type="xsd:int" minOccurs="0" maxOccurs="1"/>
                                             SecuencialTC = 0;
-                                            //<element name="autorizacionTC" type="xsd:int" minOccurs="0" maxOccurs="1"/>
                                             AutorizacionTC = 0;
-                                            //<element name="tarjetaC" type="xsd:string" minOccurs="0" maxOccurs="1"/>
                                             TarjetaC = string.Empty;
-                                            //<element name="medioTC" type="xsd:int">
                                             medioTC = 1;
-                                            //<!-- 1. IAVE card-->
-                                            //<!-- 2. Credit card-->
-                                            //</element>
-                                            //<element name="statusTC" type="xsd:int" minOccurs="0" maxOccurs="1"/>
                                             StatusTC = 0;
-                                            //<element name="UtcTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
                                             Utctime = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).AddHours(5);
-                                            //<element name="LocalTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
                                             LocalTime = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]);
-                                            //<element name="tipoVehiculo" minOccurs="0" maxOccurs="1" type="xsd:unsignedByte"/>
-                                            //1 autobus
-                                            //0 camion
-                                            //tipoVehiculo = 0
-                                            //element name="Cuerpo" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-                                            //Cuerpo = "A"
                                             Cuerpo = MtGlb.oDataRow["Voie"].ToString().Substring(0, 1);
                                             //fin
 

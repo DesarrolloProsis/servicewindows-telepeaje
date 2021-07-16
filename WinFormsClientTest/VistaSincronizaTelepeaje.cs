@@ -55,7 +55,7 @@ namespace WindowsServiceTelepeaje
             }
             
         }
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             CuentaInformación cuentaInformación = new CuentaInformación(this.GetPlazaInformation());
             DateTime fechaInicio = DTInicio.Value;
@@ -65,7 +65,15 @@ namespace WindowsServiceTelepeaje
             PlazaEntity plazaSelected = (PlazaEntity)cbPlazas.SelectedItem;
             if (plazaSelected != null)
             {
-                LogInfo.Text = cuentaInformación.MuestraInformacion(fechaInicio, fechaFin, plazaSelected);
+                try
+                {
+                    LogInfo.Text = await cuentaInformación.MuestraInformacion(fechaInicio, fechaFin, plazaSelected);
+                }
+                catch (Exception ex)
+                {
+
+                    MessageBox.Show("ERROR:" + ex);
+                }
             }
             else
             {
@@ -73,7 +81,7 @@ namespace WindowsServiceTelepeaje
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private async void button2_Click(object sender, EventArgs e)
         {
             CuentaInformación cuentaInformación = new CuentaInformación(this.GetPlazaInformation());
             DateTime fechaInicio = DTInicio.Value;
