@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Data;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -482,7 +483,7 @@ namespace WindowsServiceTelepeaje
                                         }
 
                                         MtGlb.InsertQuerySqlServer(StrQuerys);
-                                        this.EscribeLogFile(nombreLog, "dato insertado", false);
+                                        //this.EscribeLogFile(nombreLog, "dato insertado", false);
                                         /*******************************************************************************************/
                                     }
                                 }
@@ -547,7 +548,6 @@ namespace WindowsServiceTelepeaje
             {
                 Directory.CreateDirectory(Path);
             }
-
             PathFile = Path + "Log" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt";
             return PathFile;
         }
@@ -558,7 +558,6 @@ namespace WindowsServiceTelepeaje
             {
                 //Open the File
                 StreamWriter sw = new StreamWriter(PathFile, true, Encoding.ASCII);
-
                 //Write
                 sw.Write(Texto);
                 //close the file
@@ -596,5 +595,4 @@ namespace WindowsServiceTelepeaje
                 Console.WriteLine("Exception: " + e.Message);
             }
         }
-    }
 }
