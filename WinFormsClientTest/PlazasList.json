@@ -1,7 +1,7 @@
 [
   {
     "Plazacobro": "05",
-    "Nombre": "queretaro",
+    "Nombre": "Palmillas",
     "IPService": "http://192.168.0.1:1212",
     "OracleCon": "User Id=GEAINT;Password=GEAINT;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.3.23.221)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=GEAPROD)))",
     "SqlCon": "data source=.;initial catalog=ProsisDBv1_1;user id=SA;password=CAPUFE;MultipleActiveResultSets=True;App=EntityFramework"
