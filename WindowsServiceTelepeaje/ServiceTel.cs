@@ -53,7 +53,8 @@ namespace WindowsServiceTelepeaje
         private void TimProcess_Elapsed(object sender, ElapsedEventArgs e)
         {
             timProcess.Enabled = false;
-            ExecuteProcess();
+            //ExecuteProcess();
+            handleSegmentosDeSincronizar();
         }
 
         protected override void OnStop()
@@ -61,32 +62,24 @@ namespace WindowsServiceTelepeaje
             this.EscribeLogFile("LogDetenerServicio.txt", "Se uso OnStop: " + DateTime.Now.ToString(), false);
         }
 
-        private void ExecuteProcess()
+        public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin)
         {
             try
             {
-                string nombreLog = this.GetNombreFile();
                 Int16 Rodada = 0;
                 i++;
-                this.EscribeLogFile(nombreLog, "Se inicia Procesamiento : " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
-
-                /***********************************************************************************************************/
-
+                LogServiceTelepeage.EscribeLog("== Inicio ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString());
                 if (iniciarCon)
                 {
                     MtGlb = new MetodosGlbRepository();
-                    MtGlb.CrearConexionOracle();
+                    MtGlb.CrearConexionOracle(this.PlazaEntity);
                     iniciarCon = false;
                 }
-                var IdPlazaCobro = ConfigurationManager.AppSettings["plazacobro"];
-
+                var IdPlazaCobro = this.PlazaEntity.plazacobro; //ConfigurationManager.AppSettings["plazacobro"];
                 string StrQuerys;
-
                 string H_inicio_turno = string.Empty;
-
                 double Dbl_registros = 0.0d;
                 double _count = 0.0d;
-                //---------------
                 int Secuencial;
                 int Carril = 0;
                 string Fecha;
@@ -97,7 +90,6 @@ namespace WindowsServiceTelepeaje
                 int Ejes = 0;
                 int Sec_piso;
                 Int16 Turno = 0;
-
                 int SecuencialTC;
                 int AutorizacionTC;
                 string TarjetaC;
@@ -107,7 +99,6 @@ namespace WindowsServiceTelepeaje
                 DateTime LocalTime;
                 int TipoVehiculo = 0;
                 string Cuerpo;
-
                 int resultado = 0;
                 bool CarrilInex = false;
                 bool event_numbool = false;
@@ -141,10 +132,9 @@ namespace WindowsServiceTelepeaje
 
                 if (query != null)
                     H_inicio_turno = query.DATE_TRANSACTION.Value.ToString("yyyy/MM/dd HH:mm:ss");
-                else
-                    H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
-
-                H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddMinutes(-60).ToString("yyyy/MM/dd HH:mm:ss");
+                H_inicio_turno = Convert.ToDateTime("2021/05/26 11:00:00").ToString("yyyy/MM/dd HH:mm:ss");
+                int TiempoAtras = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
+                H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddHours(-TiempoAtras).ToString("yyyy/MM/dd HH:mm:ss");
                 //ORACLE
                 StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
                             "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
@@ -154,8 +144,10 @@ namespace WindowsServiceTelepeaje
 
                             "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
                             "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
-                            "WHERE" +
-                            "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
+                            "WHERE"
+                            +
+                            "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
+                            +
                             "AND  ID_PAIEMENT  = 15 " +
                             "AND (TRANSACTION.Id_Voie = '1' " +
                             "OR TRANSACTION.Id_Voie = '2' " +
@@ -180,10 +172,8 @@ namespace WindowsServiceTelepeaje
                         for (int i = 0; i < MtGlb.Ds.Tables["TRANSACTION"].Rows.Count; i++)
                         {
                             MtGlb.oDataRow = MtGlb.Ds.Tables["TRANSACTION"].Rows[i];
-
                             var n1 = MtGlb.oDataRow["TRANSACTION_CPT1"].ToString();
                             var n2 = Convert.ToInt16(MtGlb.oDataRow["ACD_CLASS"].ToString());
-
                             if (MtGlb.oDataRow["TRANSACTION_CPT1"].ToString() == "000000" && Convert.ToInt16(MtGlb.oDataRow["ACD_CLASS"].ToString()) >= 1)
                             {
                                 monto_detec = true;
@@ -208,283 +198,248 @@ namespace WindowsServiceTelepeaje
                                             " and TAB_ID_CLASSE = " + MtGlb.oDataRow["TAB_ID_CLASSE"].ToString() + " " +
                                             " and ACD_CLASS = " + MtGlb.oDataRow["ACD_CLASS"].ToString() + " ";
 
+
                                 if (MtGlb.QueryDataSet_SqlServerDBv1_1(StrQuerys, "pn_importacion_wsIndra"))
                                 {
-                                    if (!MtGlb.oDataRowSqlServer.HasErrors && Convert.ToInt32(MtGlb.oDataRowSqlServer[0]) < 1)
+                                    if (MtGlb.oDataRowSqlServer.HasErrors == false)
                                     {
-                                        _count++;
-
-                                        //INICIO
-                                        Secuencial = Convert.ToInt32(MtGlb.oDataRow["EVENT_NUMBER"]);
-
-                                        var CarrilFound = from myRow in Carriles.car
-                                                          where myRow.Num_Gea == MtGlb.oDataRow["Voie"].ToString().Substring(1, 2)
-                                                          select myRow;
-
-                                        if (CarrilFound.Any())
+                                        if (Convert.ToInt32(MtGlb.oDataRowSqlServer[0]) < 1)
                                         {
-                                            Carril = Convert.ToInt32(CarrilFound.FirstOrDefault().Num_Capufe);
-                                        }
-                                        else
-                                        {
-                                            CarrilInex = true;
-                                            break;
-                                        }
+                                            _count++;
 
-                                        Fecha = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("dd-MM-yyyy");
-                                        //'<!--21-09-2007-->
-                                        //'<element name="Hora" type="xsd:string"/>
-                                        Hora = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("HH:mm:ss");
-                                        //'<!--11:59:59-->
-                                        //'<element name="tarjeta" type="xsd:string"/>
-                                        Tarjeta = MtGlb.oDataRow["CONTENU_ISO"].ToString().Substring(0, 15).Trim();
+                                            //INICIO
+                                            Secuencial = Convert.ToInt32(MtGlb.oDataRow["EVENT_NUMBER"]);
 
-                                        if (string.IsNullOrEmpty(Tarjeta))
-                                        {
-                                            tagempty = true;
-                                            break;
-                                        }
+                                            var CarrilFound = from myRow in Carriles.car
+                                                              where myRow.Num_Gea == MtGlb.oDataRow["Voie"].ToString().Substring(1, 2)
+                                                              select myRow;
 
-                                        //isoc
-                                        if (Tarjeta.Length == 13 && Tarjeta.Substring(0, 3) == "009")
-                                            Tarjeta = Tarjeta.Substring(0, 3) + Tarjeta.Substring(5, 8).Trim();
-
-                                        Status = 1;
-
-                                        switch (Convert.ToInt32(MtGlb.oDataRow["TAB_ID_CLASSE"]))
-                                        {
-                                            case 1:
-                                                Clase = 1;
-                                                Ejes = 2;
-                                                Rodada = 0;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 2:
-                                                Clase = 12;
-                                                Ejes = 2;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 3:
-                                                Clase = 13;
-                                                Ejes = 3;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 4:
-                                                Clase = 14;
-                                                Ejes = 4;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 5:
-                                                Clase = 5;
-                                                Ejes = 5;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 6:
-                                                Clase = 6;
-                                                Ejes = 6;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 7:
-                                                Clase = 7;
-                                                Ejes = 7;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 8:
-                                                Clase = 8;
-                                                Ejes = 8;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 9:
-                                                Clase = 9;
-                                                Ejes = 9;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 10:
-                                                Clase = 1;
-                                                Ejes = 3;
-                                                Rodada = 0;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 11:
-                                                Clase = 1;
-                                                Ejes = 4;
-                                                Rodada = 0;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 12:
-                                                Clase = 2;
-                                                Ejes = 2;
-                                                Rodada = 1;
-                                                TipoVehiculo = 1;
-                                                break;
-
-                                            case 13:
-                                                Clase = 3;
-                                                Ejes = 3;
-                                                Rodada = 1;
-                                                TipoVehiculo = 1;
-                                                break;
-
-                                            case 14:
-                                                Clase = 4;
-                                                Ejes = 4;
-                                                Rodada = 1;
-                                                TipoVehiculo = 1;
-                                                break;
-
-                                            case 15:
-                                                Clase = 10;
-                                                Ejes = 2;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 16:
-                                                Clase = 9;
-                                                Ejes = 9 + Convert.ToInt32(MtGlb.oDataRow["CODE_GRILLE_TARIF"]); //n
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 17:
-                                                Clase = 1;
-                                                if (MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == "@" || MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == ":")
-                                                    Ejes = 2 + 8; //n
-                                                else
-                                                    Ejes = 2 + Convert.ToInt32(MtGlb.oDataRow["CODE_GRILLE_TARIF"]); //n
-                                                Rodada = 0;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 18:
-                                                Clase = 9;
-                                                TipoVehiculo = 0;
-                                                Ejes = 10;
-                                                Rodada = 1;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 19:
-                                                Clase = 11;
-                                                Ejes = 2 + Convert.ToInt32(MtGlb.oDataRow["CODE_GRILLE_TARIF"]); //n
-                                                Rodada = 0;
-                                                TipoVehiculo = 0;
-                                                break;
-
-                                            case 20:
-                                                Clase = 0;
-                                                Ejes = 0;
-                                                Rodada = 0;
-                                                TipoVehiculo = 0;
-                                                break;
-                                        }
-
-                                        Sec_piso = Convert.ToInt32(MtGlb.oDataRow["EVENT_NUMBER"]);
-
-                                        if (MtGlb.oDataRow["Shift_number"].ToString() == "1")
-                                            Turno = 4;
-                                        else if (MtGlb.oDataRow["Shift_number"].ToString() == "2")
-                                            Turno = 5;
-                                        else if (MtGlb.oDataRow["Shift_number"].ToString() == "3")
-                                            Turno = 6;
-
-                                        //<element name="secuencialTC" type="xsd:int" minOccurs="0" maxOccurs="1"/>
-                                        SecuencialTC = 0;
-                                        //<element name="autorizacionTC" type="xsd:int" minOccurs="0" maxOccurs="1"/>
-                                        AutorizacionTC = 0;
-                                        //<element name="tarjetaC" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-                                        TarjetaC = string.Empty;
-                                        //<element name="medioTC" type="xsd:int">
-                                        medioTC = 1;
-                                        //<!-- 1. IAVE card-->
-                                        //<!-- 2. Credit card-->
-                                        //</element>
-                                        //<element name="statusTC" type="xsd:int" minOccurs="0" maxOccurs="1"/>
-                                        StatusTC = 0;
-                                        //<element name="UtcTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-                                        Utctime = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).AddHours(5);
-                                        //<element name="LocalTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-                                        LocalTime = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]);
-                                        //<element name="tipoVehiculo" minOccurs="0" maxOccurs="1" type="xsd:unsignedByte"/>
-                                        //1 autobus
-                                        //0 camion
-                                        //tipoVehiculo = 0
-                                        //element name="Cuerpo" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-                                        //Cuerpo = "A"
-                                        Cuerpo = MtGlb.oDataRow["Voie"].ToString().Substring(0, 1);
-                                        //fin
-
-                                        resultado = Ws.MoveTransactionsUp(Convert.ToInt32(Secuencial),
-                                                                            Convert.ToInt32(Carril),
-                                                                            Convert.ToString(Fecha),
-                                                                            Convert.ToString(Hora),
-                                                                            Convert.ToString(Tarjeta),
-                                                                            Convert.ToByte(Status),
-                                                                            Convert.ToByte(Clase),
-                                                                            Convert.ToByte(Ejes),
-                                                                            Convert.ToByte(Rodada),
-                                                                            Convert.ToInt32(Sec_piso),
-                                                                            Convert.ToByte(Turno),
-                                                                            Convert.ToInt32(SecuencialTC),
-                                                                            Convert.ToInt32(AutorizacionTC),
-                                                                            Convert.ToString(TarjetaC),
-                                                                            Convert.ToInt32(medioTC),
-                                                                            Convert.ToInt32(StatusTC),
-                                                                            Convert.ToDateTime(Utctime.ToString("yyyy-MM-ddTHH:mm:ss")),
-                                                                            Convert.ToDateTime(LocalTime.ToString("yyyy-MM-ddTHH:mm:ss")),
-                                                                            Convert.ToByte(TipoVehiculo),
-                                                                            Convert.ToString(Cuerpo));
-                                        //resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
-                                        if (resultado == 1)
-                                        {
-                                            if (MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == "@" || MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == ":")
-                                            {
-                                                StrQuerys = "insert into pn_importacion_wsIndra(" +
-                                                            "DATE_TRANSACTION, VOIE, EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, TAB_ID_CLASSE, CLASE_MARCADA, MONTO_MARCADO, ACD_CLASS, CLASE_DETECTADA, MONTO_DETECTADO, CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, fecha_ext, PLAZA)values(" +
-                                                            "'" + Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("yyyyMMdd HH:mm:ss") +
-                                                            "','" + MtGlb.oDataRow["VOIE"] + "'," + MtGlb.oDataRow["EVENT_NUMBER"] + "," +
-                                                            MtGlb.oDataRow["FOLIO_ECT"] + "," + MtGlb.oDataRow["Version_Tarif"] + "," + MtGlb.oDataRow["ID_PAIEMENT"] +
-                                                            "," + MtGlb.oDataRow["TAB_ID_CLASSE"] + ",'" + MtGlb.oDataRow["CLASE_MARCADA"] + "'," + MtGlb.oDataRow["MONTO_MARCADO"] +
-                                                            "," + MtGlb.oDataRow["ACD_CLASS"] + ",'" + MtGlb.oDataRow["CLASE_DETECTADA"] + "'," + MtGlb.oDataRow["MONTO_DETECTADO"] +
-                                                            ",'" + Tarjeta + "',8,'" + MtGlb.oDataRow["ID_OBS_MP"] + "'," + MtGlb.oDataRow["Shift_number"] + ",'" +
-                                                            DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "'," + IdPlazaCobro + ")";
-                                            }
+                                            if (CarrilFound.Count() > 0)
+                                                Carril = Convert.ToInt32(CarrilFound.FirstOrDefault().Num_Capufe);
                                             else
                                             {
-                                                StrQuerys = "insert into pn_importacion_wsIndra(" +
-                                                            "DATE_TRANSACTION, VOIE, EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, TAB_ID_CLASSE, CLASE_MARCADA, MONTO_MARCADO, ACD_CLASS, CLASE_DETECTADA, MONTO_DETECTADO, CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, fecha_ext, PLAZA)values(" +
-                                                            "'" + Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("yyyyMMdd HH:mm:ss") + "','" +
-                                                            MtGlb.oDataRow["VOIE"] + "'," + MtGlb.oDataRow["EVENT_NUMBER"] + "," + MtGlb.oDataRow["FOLIO_ECT"] + "," +
-                                                            MtGlb.oDataRow["Version_Tarif"] + "," + MtGlb.oDataRow["ID_PAIEMENT"] + "," + MtGlb.oDataRow["TAB_ID_CLASSE"] +
-                                                            ",'" + MtGlb.oDataRow["CLASE_MARCADA"] + "'," + MtGlb.oDataRow["MONTO_MARCADO"] + "," + MtGlb.oDataRow["ACD_CLASS"] +
-                                                            ",'" + MtGlb.oDataRow["CLASE_DETECTADA"] + "'," + MtGlb.oDataRow["MONTO_DETECTADO"] + ",'" + Tarjeta + "'," +
-                                                            MtGlb.oDataRow["CODE_GRILLE_TARIF"] + ",'" + MtGlb.oDataRow["ID_OBS_MP"] + "'," + MtGlb.oDataRow["Shift_number"] + ",'" +
-                                                            DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "'," + IdPlazaCobro + ")";
+                                                CarrilInex = true;
+                                                break;
                                             }
-                                        }
 
-                                        MtGlb.InsertQuerySqlServer(StrQuerys);
-                                        //this.EscribeLogFile(nombreLog, "dato insertado", false);
-                                        /*******************************************************************************************/
+
+                                            Fecha = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("dd-MM-yyyy");
+                                            Hora = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("HH:mm:ss");
+                                            Tarjeta = MtGlb.oDataRow["CONTENU_ISO"].ToString().Substring(0, 15).Trim();
+
+                                            if (string.IsNullOrEmpty(Tarjeta))
+                                            {
+                                                tagempty = true;
+                                                break;
+                                            }
+
+                                            //isoc
+                                            if (Tarjeta.Length == 13 && Tarjeta.Substring(0, 3) == "009")
+                                                Tarjeta = Tarjeta.Substring(0, 3) + Tarjeta.Substring(5, 8).Trim();
+
+                                            Status = 1;
+
+                                            switch (Convert.ToInt32(MtGlb.oDataRow["TAB_ID_CLASSE"]))
+                                            {
+                                                case 1:
+                                                    Clase = 1;
+                                                    Ejes = 2;
+                                                    Rodada = 0;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 2:
+                                                    Clase = 12;
+                                                    Ejes = 2;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 3:
+                                                    Clase = 13;
+                                                    Ejes = 3;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 4:
+                                                    Clase = 14;
+                                                    Ejes = 4;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 5:
+                                                    Clase = 5;
+                                                    Ejes = 5;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 6:
+                                                    Clase = 6;
+                                                    Ejes = 6;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 7:
+                                                    Clase = 7;
+                                                    Ejes = 7;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 8:
+                                                    Clase = 8;
+                                                    Ejes = 8;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 9:
+                                                    Clase = 9;
+                                                    Ejes = 9;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 10:
+                                                    Clase = 1;
+                                                    Ejes = 3;
+                                                    Rodada = 0;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 11:
+                                                    Clase = 1;
+                                                    Ejes = 4;
+                                                    Rodada = 0;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 12:
+                                                    Clase = 2;
+                                                    Ejes = 2;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 1;
+                                                    break;
+                                                case 13:
+                                                    Clase = 3;
+                                                    Ejes = 3;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 1;
+                                                    break;
+                                                case 14:
+                                                    Clase = 4;
+                                                    Ejes = 4;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 1;
+                                                    break;
+                                                case 15:
+                                                    Clase = 10;
+                                                    Ejes = 2;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 16:
+                                                    Clase = 9;
+                                                    Ejes = 9 + Convert.ToInt32(MtGlb.oDataRow["CODE_GRILLE_TARIF"]); //n
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 17:
+                                                    Clase = 1;
+                                                    if (MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == "@" || MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == ":")
+                                                        Ejes = 2 + 8; //n
+                                                    else
+                                                        Ejes = 2 + Convert.ToInt32(MtGlb.oDataRow["CODE_GRILLE_TARIF"]); //n
+                                                    Rodada = 0;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 18:
+                                                    Clase = 9;
+                                                    TipoVehiculo = 0;
+                                                    Ejes = 10;
+                                                    Rodada = 1;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 19:
+                                                    Clase = 11;
+                                                    Ejes = 2 + Convert.ToInt32(MtGlb.oDataRow["CODE_GRILLE_TARIF"]); //n
+                                                    Rodada = 0;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                                case 20:
+                                                    Clase = 0;
+                                                    Ejes = 0;
+                                                    Rodada = 0;
+                                                    TipoVehiculo = 0;
+                                                    break;
+                                            }
+
+                                            Sec_piso = Convert.ToInt32(MtGlb.oDataRow["EVENT_NUMBER"]);
+
+                                            if (MtGlb.oDataRow["Shift_number"].ToString() == "1")
+                                                Turno = 4;
+                                            else if (MtGlb.oDataRow["Shift_number"].ToString() == "2")
+                                                Turno = 5;
+                                            else if (MtGlb.oDataRow["Shift_number"].ToString() == "3")
+                                                Turno = 6;
+
+                                            SecuencialTC = 0;
+                                            AutorizacionTC = 0;
+                                            TarjetaC = string.Empty;
+                                            medioTC = 1;
+                                            StatusTC = 0;
+                                            Utctime = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).AddHours(5);
+                                            LocalTime = Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]);
+                                            Cuerpo = MtGlb.oDataRow["Voie"].ToString().Substring(0, 1);
+                                            //fin
+
+                                            resultado = Ws.MoveTransactionsUp(Convert.ToInt32(Secuencial),
+                                                                                Convert.ToInt32(Carril),
+                                                                                Convert.ToString(Fecha),
+                                                                                Convert.ToString(Hora),
+                                                                                Convert.ToString(Tarjeta),
+                                                                                Convert.ToByte(Status),
+                                                                                Convert.ToByte(Clase),
+                                                                                Convert.ToByte(Ejes),
+                                                                                Convert.ToByte(Rodada),
+                                                                                Convert.ToInt32(Sec_piso),
+                                                                                Convert.ToByte(Turno),
+                                                                                Convert.ToInt32(SecuencialTC),
+                                                                                Convert.ToInt32(AutorizacionTC),
+                                                                                Convert.ToString(TarjetaC),
+                                                                                Convert.ToInt32(medioTC),
+                                                                                Convert.ToInt32(StatusTC),
+                                                                                Convert.ToDateTime(Utctime.ToString("yyyy-MM-ddTHH:mm:ss")),
+                                                                                Convert.ToDateTime(LocalTime.ToString("yyyy-MM-ddTHH:mm:ss")),
+                                                                                Convert.ToByte(TipoVehiculo),
+                                                                                Convert.ToString(Cuerpo));
+                                            //resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
+                                            if (resultado == 1)
+                                            {
+                                                LogServiceTelepeage.EscribeLog("se inserto " + Tarjeta + " Fecha: " + Fecha + " nEvento: " + MtGlb.oDataRow["EVENT_NUMBER"].ToString());
+                                                if (MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == "@" || MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == ":")
+                                                {
+                                                    StrQuerys = "insert into pn_importacion_wsIndra(" +
+                                                                "DATE_TRANSACTION, VOIE, EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, TAB_ID_CLASSE, CLASE_MARCADA, MONTO_MARCADO, ACD_CLASS, CLASE_DETECTADA, MONTO_DETECTADO, CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, fecha_ext, PLAZA)values(" +
+                                                                "'" + Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("yyyyMMdd HH:mm:ss") +
+                                                                "','" + MtGlb.oDataRow["VOIE"] + "'," + MtGlb.oDataRow["EVENT_NUMBER"] + "," +
+                                                                MtGlb.oDataRow["FOLIO_ECT"] + "," + MtGlb.oDataRow["Version_Tarif"] + "," + MtGlb.oDataRow["ID_PAIEMENT"] +
+                                                                "," + MtGlb.oDataRow["TAB_ID_CLASSE"] + ",'" + MtGlb.oDataRow["CLASE_MARCADA"] + "'," + MtGlb.oDataRow["MONTO_MARCADO"] +
+                                                                "," + MtGlb.oDataRow["ACD_CLASS"] + ",'" + MtGlb.oDataRow["CLASE_DETECTADA"] + "'," + MtGlb.oDataRow["MONTO_DETECTADO"] +
+                                                                ",'" + Tarjeta + "',8,'" + MtGlb.oDataRow["ID_OBS_MP"] + "'," + MtGlb.oDataRow["Shift_number"] + ",'" +
+                                                                DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "'," + IdPlazaCobro + ")";
+                                                }
+                                                else
+                                                {
+                                                    StrQuerys = "insert into pn_importacion_wsIndra(" +
+                                                                "DATE_TRANSACTION, VOIE, EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, TAB_ID_CLASSE, CLASE_MARCADA, MONTO_MARCADO, ACD_CLASS, CLASE_DETECTADA, MONTO_DETECTADO, CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, fecha_ext, PLAZA)values(" +
+                                                                "'" + Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("yyyyMMdd HH:mm:ss") + "','" +
+                                                                MtGlb.oDataRow["VOIE"] + "'," + MtGlb.oDataRow["EVENT_NUMBER"] + "," + MtGlb.oDataRow["FOLIO_ECT"] + "," +
+                                                                MtGlb.oDataRow["Version_Tarif"] + "," + MtGlb.oDataRow["ID_PAIEMENT"] + "," + MtGlb.oDataRow["TAB_ID_CLASSE"] +
+                                                                ",'" + MtGlb.oDataRow["CLASE_MARCADA"] + "'," + MtGlb.oDataRow["MONTO_MARCADO"] + "," + MtGlb.oDataRow["ACD_CLASS"] +
+                                                                ",'" + MtGlb.oDataRow["CLASE_DETECTADA"] + "'," + MtGlb.oDataRow["MONTO_DETECTADO"] + ",'" + Tarjeta + "'," +
+                                                                MtGlb.oDataRow["CODE_GRILLE_TARIF"] + ",'" + MtGlb.oDataRow["ID_OBS_MP"] + "'," + MtGlb.oDataRow["Shift_number"] + ",'" +
+                                                                DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "'," + IdPlazaCobro + ")";
+                                                }
+                                            }
+
+                                            MtGlb.InsertQuerySqlServer(StrQuerys);
+
+                                            /*******************************************************************************************/
+                                        }
                                     }
                                 }
                             }
@@ -497,46 +452,44 @@ namespace WindowsServiceTelepeaje
                     }
                     else
                     {
-                        this.EscribeLogFile(nombreLog, "Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.", false);
-                        timProcess.Enabled = false;
+                        LogServiceTelepeage.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.");
                     }
                 }
 
                 // VALIDACIONES
                 if (tagempty)
                 {
-                    this.EscribeLogFile(nombreLog, "Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
-                    timProcess.Enabled = false;
+                    LogServiceTelepeage.EscribeLog("Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString());
                 }
                 else if (monto_detec)
                 {
-                    this.EscribeLogFile(nombreLog, "Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString(), false);
-                    timProcess.Enabled = false;
+                    LogServiceTelepeage.EscribeLog("Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString());
                 }
                 else if (CarrilInex)
                 {
-                    this.EscribeLogFile(nombreLog, "Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.", false);
-                    timProcess.Enabled = false;
+                    LogServiceTelepeage.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.");
                 }
                 else if (event_numbool)
                 {
-                    this.EscribeLogFile(nombreLog, "EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"], false);
-                    timProcess.Enabled = false;
+                    LogServiceTelepeage.EscribeLog("EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"]);
                 }
                 else
                 {
-                    this.EscribeLogFile(nombreLog, "Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.", false);
-                    timProcess.Enabled = true;
+                    LogServiceTelepeage.EscribeLog("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.");
                 }
-                this.EscribeLogFile(nombreLog, "==========FIN DEL PROCESO PROSIS" + i.ToString() + " a las " + DateTime.Now.ToString(), false);
-                MtGlb.ExitConnectionDbContext();
-                MtGlb.ExitConnectionOracle();
+
+
             }
             catch (Exception ex)
             {
-                this.EscribeLogError("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
-                //timProcess.Enabled = false;//descomentar esta linea
-                timProcess.Enabled = true;
+                LogServiceTelepeage.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
+            }
+            finally
+            {
+                LogServiceTelepeage.EscribeLog("==Fin: " + i.ToString() + " a las " + DateTime.Now.ToString());
+
+                MtGlb.ExitConnectionDbContext();
+                MtGlb.ExitConnectionOracle();
             }
         }
 
