@@ -72,10 +72,11 @@ namespace WindowsServiceTelepeaje
                 if (iniciarCon)
                 {
                     MtGlb = new MetodosGlbRepository();
-                    MtGlb.CrearConexionOracle(this.PlazaEntity);
+                    //MtGlb.CrearConexionOracle(this.PlazaEntity);
+                    MtGlb.CrearConexionOracle();
                     iniciarCon = false;
                 }
-                var IdPlazaCobro = this.PlazaEntity.plazacobro; //ConfigurationManager.AppSettings["plazacobro"];
+                var IdPlazaCobro = ConfigurationManager.AppSettings["plazacobro"];
                 string StrQuerys;
                 string H_inicio_turno = string.Empty;
                 double Dbl_registros = 0.0d;
