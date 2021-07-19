@@ -10,15 +10,12 @@ namespace WindowsServiceTelepeaje
 {
     public class CuentaInformación
     {
-        //PlazaEntity PlazaEntity;
-        public CuentaInformación()//PlazaEntity PlazaEntity)
+        public CuentaInformación()
         {
-            //this.PlazaEntity = PlazaEntity;
         }
 
         public Task<int> CuentaTransaccionesSQLServer(DateTime fechaInicio, DateTime fechaFin)
         {
-            //string cadenaConexion = "data source=.;initial catalog=ProsisDBv1_1;user id=SA;password=CAPUFE;MultipleActiveResultSets=True;App=EntityFramework";
             ApplicationDbContext db = new ApplicationDbContext();//Check connection
             string querySql;
             try
@@ -26,7 +23,6 @@ namespace WindowsServiceTelepeaje
                 querySql = @"SELECT * FROM [ProsisDBv1_1].[dbo].[pn_importacion_wsIndra]" +
                        "WHERE (DATE_TRANSACTION between '" + Convert.ToDateTime(fechaInicio).ToString("yyyy-MM-dd HH:mm:ss") + "'" +
                        "and '" + Convert.ToDateTime(fechaFin).ToString("yyyy-MM-dd HH:mm:ss") + "')";
-
                 var contadorsql = db.pn_importacion_wsIndra.SqlQuery(querySql).CountAsync();
                 return contadorsql;
             }
@@ -53,17 +49,13 @@ namespace WindowsServiceTelepeaje
                                 "OR TRANSACTION.Id_Voie = '4' " +
                                 "OR TRANSACTION.Id_Voie = 'X') ";
                 MetodosGlbRepository MtGlb = new MetodosGlbRepository();
-                MtGlb.CrearConexionOracle(this.PlazaEntity);
-                //var resultado = await MtGlb.QueryDataCount(queryOracle);
+                MtGlb.CrearConexionOracle();
                 var contadorOracle = MtGlb.QueryDataCount(queryOracle);
-                //LogServiceTelepeage.EscribeLog("Cuenta oracle" +contadorOracle);             
                 MtGlb.ExitConnectionOracle();
                 return contadorOracle;
             }
             catch (Exception ex)
             {
-                //LogServiceTelepeage.checkFileLog();
-                //LogServiceTelepeage.EscribeLog(ex + "");
                 throw new Exception("Error SQL SERVER: " + ex.Message);
             }
         }
@@ -71,7 +63,6 @@ namespace WindowsServiceTelepeaje
         public async Task<string> MuestraInformacion(DateTime fechaInicio, DateTime fechaFin)
         {
             int sqlCount = await this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin);
-            Console.WriteLine("bu");
             var oracleCountTask = await this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
             int oracleCount = Convert.ToInt32(oracleCountTask);
             int diferencia = oracleCount - sqlCount;

@@ -123,6 +123,15 @@ namespace WindowsServiceTelepeaje.Service
 
             return rpt;
         }
+        public Task<object> QueryDataCount(string myExecuteQuery)
+        {
+            OracleCommand command = new OracleCommand(myExecuteQuery, ConnectionOracle());
+            //command.Connection.Open();
+
+            return command.ExecuteScalarAsync();
+
+
+        }
 
         /**************************************************************/
 
