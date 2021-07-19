@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,6 +63,7 @@ namespace WindowsServiceTelepeaje
 
         public async Task<string> MuestraInformacion(DateTime fechaInicio, DateTime fechaFin)
         {
+            
             int sqlCount = await this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin);
             var oracleCountTask = await this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
             int oracleCount = Convert.ToInt32(oracleCountTask);
