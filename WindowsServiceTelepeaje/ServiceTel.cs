@@ -595,5 +595,52 @@ namespace WindowsServiceTelepeaje
                 Console.WriteLine("Exception: " + e.Message);
             }
         }
+
+
+        public void handleSegmentosDeSincronizar()
+        {
+            CuentaInformación objCuenta = new CuentaInformación();
+            int nMinutosRetroceso = -240;
+            DateTime fechaActual = DateTime.Now;
+            DateTime retroceso;
+            DateTime limite;
+            fechaActual.AddMinutes(nMinutosRetroceso); //Retroceso
+
+            Console.WriteLine("hora actual" + fechaActual);
+            //Console.WriteLine("hora restada: " + fechaActual.AddMinutes(-240));
+
+            for (int i = 0; i < 8; i++)
+            {
+                retroceso = fechaActual.AddMinutes(nMinutosRetroceso); //Retroceso
+                limite = retroceso.AddMinutes(30);
+                Console.WriteLine("horaInicio: " + retroceso + "horaFin: " + limite);
+                //revisar conteo
+                if (objCuenta.CuentaDiferenciaRegistros(retroceso,limite) > 0)
+                {
+                    Console.WriteLine("Se llama al sincronizar, con las fechas dadas");
+                }
+                else
+                {
+                    Console.WriteLine("No es necesario sincronizar este bloque");
+                }
+
+                nMinutosRetroceso += 30;
+            }
+
+            Console.WriteLine("Hello World!");
+
+        }
+
+        public static int DireferenciaRegistros()
+        {
+            bool bandera = true;
+
+            if (bandera)
+            {
+                bandera = false;
+                return 0;
+            }
+            return 1;
+        }
     }
 }

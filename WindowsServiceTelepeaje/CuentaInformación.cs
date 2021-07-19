@@ -71,5 +71,14 @@ namespace WindowsServiceTelepeaje
             var variable = "SQL Registros: " + sqlCount + "Oracle Registros: " + oracleCount + "Diferencia: " + diferencia;
             return variable;
         }
+
+        public int CuentaDiferenciaRegistros(DateTime fechaInicio, DateTime fechaFin)
+        {
+            int sqlCount =  this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin).Result;
+            var oracleCountTask =  this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
+            int oracleCount = Convert.ToInt32(oracleCountTask);
+            int diferencia = oracleCount - sqlCount;
+            return diferencia;
+        }
     }
 }
