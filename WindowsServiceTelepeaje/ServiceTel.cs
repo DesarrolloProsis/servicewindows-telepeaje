@@ -571,6 +571,7 @@ namespace WindowsServiceTelepeaje
                 //revisar conteo
                 if (objCuenta.CuentaDiferenciaRegistros(retroceso,limite) > 0)
                 {
+                    ExecuteProcess(retroceso, limite);
                     Console.WriteLine("Se llama al sincronizar, con las fechas dadas");
                 }
                 else

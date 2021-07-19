@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="CuentaInformación.cs" />
     <Compile Include="LogServiceTel.cs" />
+    <Compile Include="LogServiceTelepeage.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\pn_importacion_wsIndra.cs" />
     <Compile Include="Models\Type_Carril.cs" />
