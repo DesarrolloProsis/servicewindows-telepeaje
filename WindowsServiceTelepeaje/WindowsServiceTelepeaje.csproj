@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CuentaInformación.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\pn_importacion_wsIndra.cs" />
     <Compile Include="Models\Type_Carril.cs" />
