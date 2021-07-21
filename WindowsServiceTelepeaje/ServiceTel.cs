@@ -22,7 +22,7 @@ namespace WindowsServiceTelepeaje
         private int i = 0;
         private bool iniciarCon = true;
         public MetodosGlbRepository MtGlb { get; set; }
-
+        string ruta;
         public ServiceTel()
         {
             InitializeComponent();
@@ -62,13 +62,13 @@ namespace WindowsServiceTelepeaje
             this.EscribeLogFile("LogDetenerServicio.txt", "Se uso OnStop: " + DateTime.Now.ToString(), false);
         }
 
-        public void ExecuteProcess(DateTime fechaInicio, DateTime fechaFin)
+        public void ExecuteProcess(string ruta, DateTime fechaInicio, DateTime fechaFin)
         {
             try
             {
                 Int16 Rodada = 0;
                 i++;
-                LogServiceTelepeage.EscribeLog("== Inicio ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString());
+                LogServiceTelepeage.EscribeLog(ruta, "== Inicio ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString());
                 if (iniciarCon)
                 {
                     MtGlb = new MetodosGlbRepository();
@@ -410,7 +410,7 @@ namespace WindowsServiceTelepeaje
                                             //resultado = 1;//comentar o borrar esto y descomentar llamada del servicio
                                             if (resultado == 1)
                                             {
-                                                LogServiceTelepeage.EscribeLog("se inserto " + Tarjeta + " Fecha: " + Fecha + " nEvento: " + MtGlb.oDataRow["EVENT_NUMBER"].ToString());
+                                                LogServiceTelepeage.EscribeLog(ruta, "se inserto " + Tarjeta + " Fecha: " + Fecha + " nEvento: " + MtGlb.oDataRow["EVENT_NUMBER"].ToString());
                                                 if (MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == "@" || MtGlb.oDataRow["CODE_GRILLE_TARIF"].ToString() == ":")
                                                 {
                                                     StrQuerys = "insert into pn_importacion_wsIndra(" +
@@ -453,41 +453,41 @@ namespace WindowsServiceTelepeaje
                     }
                     else
                     {
-                        LogServiceTelepeage.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.");
+                        LogServiceTelepeage.EscribeLog(ruta, "Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existen carriles.");
                     }
                 }
 
                 // VALIDACIONES
                 if (tagempty)
                 {
-                    LogServiceTelepeage.EscribeLog("Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString());
+                    LogServiceTelepeage.EscribeLog(ruta, "Tag vacio: " + i.ToString() + " a las " + DateTime.Now.ToString());
                 }
                 else if (monto_detec)
                 {
-                    LogServiceTelepeage.EscribeLog("Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString());
+                    LogServiceTelepeage.EscribeLog(ruta, "Cruce sin tarifa en pos: " + i.ToString() + " a las " + DateTime.Now.ToString());
                 }
                 else if (CarrilInex)
                 {
-                    LogServiceTelepeage.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.");
+                    LogServiceTelepeage.EscribeLog(ruta, "Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " no existe carril.");
                 }
                 else if (event_numbool)
                 {
-                    LogServiceTelepeage.EscribeLog("EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"]);
+                    LogServiceTelepeage.EscribeLog(ruta, "EVENT_NUMBER duplicado: " + i.ToString() + " a las " + DateTime.Now.ToString() + " VOIE: " + MtGlb.oDataRow["VOIE"] + " EVENT_NUMBER: " + MtGlb.oDataRow["EVENT_NUMBER"]);
                 }
                 else
                 {
-                    LogServiceTelepeage.EscribeLog("Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.");
+                    LogServiceTelepeage.EscribeLog(ruta, "Proceso terminado con exito ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + "con " + _count.ToString() + " registros.");
                 }
 
 
             }
             catch (Exception ex)
             {
-                LogServiceTelepeage.EscribeLog("Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
+                LogServiceTelepeage.EscribeLog(ruta, "Error en el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString() + " " + ex.Message + " " + ex.StackTrace);
             }
             finally
             {
-                LogServiceTelepeage.EscribeLog("==Fin: " + i.ToString() + " a las " + DateTime.Now.ToString());
+                LogServiceTelepeage.EscribeLog(ruta, "==Fin: " + i.ToString() + " a las " + DateTime.Now.ToString());
 
                 MtGlb.ExitConnectionDbContext();
                 MtGlb.ExitConnectionOracle();
@@ -553,6 +553,7 @@ namespace WindowsServiceTelepeaje
 
         public void handleSegmentosDeSincronizar()
         {
+            ruta = LogServiceTelepeage.GetNombreFile();
             CuentaInformación objCuenta = new CuentaInformación();
             int nMinutosRetroceso = -240;
             DateTime fechaActual = DateTime.Now;
@@ -569,9 +570,9 @@ namespace WindowsServiceTelepeaje
                 limite = retroceso.AddMinutes(30);
                 Console.WriteLine("horaInicio: " + retroceso + "horaFin: " + limite);
                 //revisar conteo
-                if (objCuenta.CuentaDiferenciaRegistros(retroceso,limite) > 0)
+                if (objCuenta.CuentaDiferenciaRegistros(ruta, retroceso,limite) > 0)
                 {
-                    ExecuteProcess(retroceso, limite);
+                    ExecuteProcess(ruta,retroceso, limite);
                     Console.WriteLine("Se llama al sincronizar, con las fechas dadas");
                 }
                 else

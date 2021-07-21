@@ -23,36 +23,36 @@ namespace WindowsServiceTelepeaje
                 }
             }
         }
-
-        public static void EscribeLog(string newRow)
+        public static string GetNombreFile()
+        {
+            string Path = @"C:\LogServiceTel\";
+            string PathFile;
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+            PathFile = Path + "Log" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt";
+            return PathFile;
+        }
+        public static void EscribeLog(string PathFile, string Texto)
         {
             try
             {
-                StreamReader sr = new StreamReader(path + archivo, true);
-                string contenido = sr.ReadToEnd();
-                sr.Dispose();
-                sr.Close();
-                using (StreamWriter file = new StreamWriter(path + "WindowsService_Temporal.txt", true))
-                {
-                    file.WriteLine(newRow); //se agrega información al documento
-                    file.WriteLine(contenido);
-                    file.Dispose();
-                    file.Close();
-                }
-                File.Delete(path + archivo);
-                File.Move(path + "WindowsService_Temporal.txt", path + archivo);
+                StreamWriter sw = new StreamWriter(PathFile, true, Encoding.ASCII);
+                sw.Write(Texto);
+                sw.Close();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine("Exception: " + e.Message);
             }
         }
 
-        public static string MostrarInformacion()
-        {
-            StreamReader sr = new StreamReader(path + archivo, true);
-            string contenido = sr.ReadToEnd();
-            return contenido;
-        }
+        //public static string MostrarInformacion()
+        //{
+        //    StreamReader sr = new StreamReader(path + archivo, true);
+        //    string contenido = sr.ReadToEnd();
+        //    return contenido;
+        //}
     }
 }

@@ -33,7 +33,7 @@ namespace WindowsServiceTelepeaje
             }
         }
 
-        public Task<object> CuentaTransaccionesOracle(DateTime fechaInicio, DateTime fechaFin)
+        public int CuentaTransaccionesOracle(DateTime fechaInicio, DateTime fechaFin)
         {
             string queryOracle;
             try
@@ -51,13 +51,13 @@ namespace WindowsServiceTelepeaje
                                 "OR TRANSACTION.Id_Voie = 'X') ";
                 MetodosGlbRepository MtGlb = new MetodosGlbRepository();
                 MtGlb.CrearConexionOracle();
-                var contadorOracle = MtGlb.QueryDataCount(queryOracle);
+                var contadorOracle = Convert.ToInt32(MtGlb.QueryDataCount(queryOracle));
                 MtGlb.ExitConnectionOracle();
                 return contadorOracle;
             }
             catch (Exception ex)
             {
-                throw new Exception("Error SQL SERVER: " + ex.Message);
+                throw new Exception("Error ORACLE: " + ex.Message);
             }
         }
 
@@ -65,23 +65,22 @@ namespace WindowsServiceTelepeaje
         {
             
             int sqlCount = await this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin);
-            var oracleCountTask = await this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
-            int oracleCount = Convert.ToInt32(oracleCountTask);
+            //var oracleCountTask = await this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
+            int oracleCount = this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
             int diferencia = oracleCount - sqlCount;
             var variable = "SQL Registros: " + sqlCount + "Oracle Registros: " + oracleCount + "Diferencia: " + diferencia;
             return variable;
         }
 
-        public int CuentaDiferenciaRegistros(DateTime fechaInicio, DateTime fechaFin)
+        public int CuentaDiferenciaRegistros(string ruta, DateTime fechaInicio, DateTime fechaFin)
         {
             int diferencia = 0;
             LogServiceTel log = new LogServiceTel();
-            string ruta = log.GetNombreFile();
+            //string ruta = log.GetNombreFile();
             try
             {
                 int sqlCount = this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin).Result;
-                var oracleCountTask = this.CuentaTransaccionesOracle(fechaInicio, fechaFin).Result;
-                int oracleCount = Convert.ToInt32(oracleCountTask);
+                int oracleCount = this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
                 diferencia = oracleCount - sqlCount;
             }
             catch (Exception ex)
