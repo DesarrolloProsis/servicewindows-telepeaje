@@ -74,10 +74,21 @@ namespace WindowsServiceTelepeaje
 
         public int CuentaDiferenciaRegistros(DateTime fechaInicio, DateTime fechaFin)
         {
-            int sqlCount =  this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin).Result;
-            var oracleCountTask =  this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
-            int oracleCount = Convert.ToInt32(oracleCountTask);
-            int diferencia = oracleCount - sqlCount;
+            int diferencia = 0;
+            LogServiceTel log = new LogServiceTel();
+            string ruta = log.GetNombreFile();
+            try
+            {
+                int sqlCount = this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin).Result;
+                var oracleCountTask = this.CuentaTransaccionesOracle(fechaInicio, fechaFin).Result;
+                int oracleCount = Convert.ToInt32(oracleCountTask);
+                diferencia = oracleCount - sqlCount;
+            }
+            catch (Exception ex)
+            {
+                diferencia = -1;
+                log.EscribeLogFile(ruta, ex + "");
+            }
             return diferencia;
         }
     }
