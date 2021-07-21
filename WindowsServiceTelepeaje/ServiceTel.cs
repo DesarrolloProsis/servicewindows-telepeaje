@@ -32,7 +32,7 @@ namespace WindowsServiceTelepeaje
         {
             timProcess = new System.Timers.Timer
             {
-                Interval = 180000
+                Interval = 120000 //180000
             };
             timProcess.Elapsed += new System.Timers.ElapsedEventHandler(TimProcess_Elapsed);
             timProcess.Enabled = true;
