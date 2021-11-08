@@ -17,7 +17,7 @@ namespace WindowsServiceTelepeaje
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new ServiceTel()
+                new ServiceTelf3()
             };
             ServiceBase.Run(ServicesToRun);
         }

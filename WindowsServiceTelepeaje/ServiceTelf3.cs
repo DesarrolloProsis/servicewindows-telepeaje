@@ -10,7 +10,7 @@ using WindowsServiceTelepeaje.Service;
 
 namespace WindowsServiceTelepeaje
 {
-    public partial class ServiceTel : ServiceBase
+    public partial class ServiceTelf3 : ServiceBase
     {
         private ServiceReference1.PortTypeClient Ws = new ServiceReference1.PortTypeClient();
 
@@ -22,7 +22,7 @@ namespace WindowsServiceTelepeaje
         private string archivo = "WindowsService.txt";
         private bool iniciarCon = true;
         MetodosGlbRepository MtGlb;
-        public ServiceTel()
+        public ServiceTelf3()
         {
             InitializeComponent();
 
@@ -183,6 +183,7 @@ namespace WindowsServiceTelepeaje
                             "WHERE" +
                             "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
                             "AND  ID_PAIEMENT  = 15 " +
+                            "AND  VOIE  != 'A20' " +
                             "AND (TRANSACTION.Id_Voie = '1' " +
                             "OR TRANSACTION.Id_Voie = '2' " +
                             "OR TRANSACTION.Id_Voie = '3' " +

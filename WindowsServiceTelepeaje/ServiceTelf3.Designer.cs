@@ -1,6 +1,6 @@
 ﻿namespace WindowsServiceTelepeaje
 {
-    partial class ServiceTel
+    partial class ServiceTelf3
     {
         /// <summary> 
         /// Variable del diseñador necesaria.
