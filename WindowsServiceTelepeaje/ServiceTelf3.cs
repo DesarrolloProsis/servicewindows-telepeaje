@@ -18,7 +18,7 @@ namespace WindowsServiceTelepeaje
 
         private System.Timers.Timer timProcess = null;
         private int i = 0;
-        private string path = @"C:\ExecutedActionSW\";
+        private string path = @"C:\fase3\";
         private string archivo = "WindowsService.txt";
         private bool iniciarCon = true;
         MetodosGlbRepository MtGlb;
