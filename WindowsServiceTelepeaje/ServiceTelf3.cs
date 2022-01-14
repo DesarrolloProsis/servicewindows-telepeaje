@@ -183,7 +183,7 @@ namespace WindowsServiceTelepeaje
                             "WHERE" +
                             "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
                             "AND  ID_PAIEMENT  = 15 " +
-                            "AND  VOIE  != 'A20' " +
+                            "AND  VOIE  != 'B06' " +
                             "AND (TRANSACTION.Id_Voie = '1' " +
                             "OR TRANSACTION.Id_Voie = '2' " +
                             "OR TRANSACTION.Id_Voie = '3' " +
