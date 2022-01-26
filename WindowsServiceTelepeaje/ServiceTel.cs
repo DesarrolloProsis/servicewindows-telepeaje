@@ -137,25 +137,51 @@ namespace WindowsServiceTelepeaje
                 int TiempoAtras = Convert.ToInt32(ConfigurationManager.AppSettings["tiempoAtras"]);
                 H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddHours(-TiempoAtras).ToString("yyyy/MM/dd HH:mm:ss");
                 //ORACLE
-                StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
-                            "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
-                            "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
-                            "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
-                            "FROM TRANSACTION " +
+                if (ConfigurationManager.AppSettings["carril"] != "")
+                {
+                    StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
+                          "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
+                          "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
+                          "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
+                          "FROM TRANSACTION " +
 
-                            "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
-                            "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
-                            "WHERE"
-                            +
-                            "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
-                            +
-                            "AND  ID_PAIEMENT  = 15 " +
-                            "AND (TRANSACTION.Id_Voie = '1' " +
-                            "OR TRANSACTION.Id_Voie = '2' " +
-                            "OR TRANSACTION.Id_Voie = '3' " +
-                            "OR TRANSACTION.Id_Voie = '4' " +
-                            "OR TRANSACTION.Id_Voie = 'X') " +
-                            "ORDER BY DATE_TRANSACTION ";
+                          "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
+                          "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
+                          "WHERE"
+                          +
+                          "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
+                          +
+                          "AND  ID_PAIEMENT  = 15 " +
+                          "AND (TRANSACTION.Id_Voie = '1' " +
+                          "OR TRANSACTION.Id_Voie = '2' " +
+                          "OR TRANSACTION.Id_Voie = '3' " +
+                          "OR TRANSACTION.Id_Voie = '4' " +
+                          "OR TRANSACTION.Id_Voie = 'X') " +
+                          "AND VOIE = '" + ConfigurationManager.AppSettings["carril"] + "' " +
+                          "ORDER BY DATE_TRANSACTION ";
+                }
+                else
+                {
+                    StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
+                         "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
+                         "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
+                         "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
+                         "FROM TRANSACTION " +
+
+                         "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
+                         "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
+                         "WHERE"
+                         +
+                         "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
+                         +
+                         "AND  ID_PAIEMENT  = 15 " +
+                         "AND (TRANSACTION.Id_Voie = '1' " +
+                         "OR TRANSACTION.Id_Voie = '2' " +
+                         "OR TRANSACTION.Id_Voie = '3' " +
+                         "OR TRANSACTION.Id_Voie = '4' " +
+                         "OR TRANSACTION.Id_Voie = 'X') " +                        
+                         "ORDER BY DATE_TRANSACTION ";
+                }
 
                 if (MtGlb.QueryDataSet(StrQuerys, "TRANSACTION"))
                 {
@@ -553,26 +579,31 @@ namespace WindowsServiceTelepeaje
 
         public void handleSegmentosDeSincronizar()
         {
+            //Variables de el config
+            DateTime fechaInicia = Convert.ToDateTime(ConfigurationManager.AppSettings["fechaInicio"]);
+            DateTime fechaFin = Convert.ToDateTime(ConfigurationManager.AppSettings["fechaFin"]);
+
             ruta = LogServiceTelepeage.GetNombreFile();
             CuentaInformación objCuenta = new CuentaInformación();
-            int nMinutosRetroceso = -240;
-            DateTime fechaActual = DateTime.Now;
-            DateTime retroceso;
-            DateTime limite;
-            fechaActual.AddMinutes(nMinutosRetroceso); //Retroceso
+            //int nMinutosRetroceso = -240;
+            //DateTime fechaActual = DateTime.Now;
+            //DateTime retroceso;
+            //DateTime limite;
+            //fechaActual.AddMinutes(nMinutosRetroceso); //Retroceso
 
-            Console.WriteLine("hora actual" + fechaActual);
+            //Console.WriteLine("hora actual" + fechaActual);
             //Console.WriteLine("hora restada: " + fechaActual.AddMinutes(-240));
 
             for (int i = 0; i < 8; i++)
             {
-                retroceso = fechaActual.AddMinutes(nMinutosRetroceso); //Retroceso
-                limite = retroceso.AddMinutes(30);
-                Console.WriteLine("horaInicio: " + retroceso + "horaFin: " + limite);
+
+                //retroceso = fechaActual.AddMinutes(nMinutosRetroceso); //Retroceso
+                //limite = retroceso.AddMinutes(30);
+                //Console.WriteLine("horaInicio: " + retroceso + "horaFin: " + limite);
                 //revisar conteo
-                if (objCuenta.CuentaDiferenciaRegistros(ruta, retroceso,limite) > 0)
+                if (objCuenta.CuentaDiferenciaRegistros(ruta, fechaInicia, fechaFin/*retroceso,limite*/) > 0)
                 {
-                    ExecuteProcess(ruta,retroceso, limite);
+                    ExecuteProcess(ruta, fechaInicia, fechaFin/*retroceso, limite*/);
                     Console.WriteLine("Se llama al sincronizar, con las fechas dadas");
                 }
                 else
@@ -580,7 +611,7 @@ namespace WindowsServiceTelepeaje
                     Console.WriteLine("No es necesario sincronizar este bloque");
                 }
 
-                nMinutosRetroceso += 30;
+                /*MinutosRetroceso += 30;*/
             }
 
             Console.WriteLine("Hello World!");

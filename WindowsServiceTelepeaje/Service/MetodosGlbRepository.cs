@@ -1,8 +1,10 @@
-﻿using Oracle.DataAccess.Client;
+﻿//using Oracle.DataAccess.Client;
+
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.OracleClient;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -34,7 +36,7 @@ namespace WindowsServiceTelepeaje.Service
             bool Rpt = false;
 
             using (SqlCommand Cmd = new SqlCommand(Query, ConnectionDbContext()))
-            {
+            {               
                 using (SqlDataAdapter Da = new SqlDataAdapter(Cmd))
                 {
                     if (DsSqlServer.Tables.Count != 0)
@@ -75,6 +77,7 @@ namespace WindowsServiceTelepeaje.Service
             bool _return = false;
 
             OracleCommand Cmd = new OracleCommand(Query, ConnectionOracle());
+            LogServiceTelepeage.EscribeLog(@"C:\Log\PruebaRichi.txt", Convert.ToString(Cmd));
             Cmd.CommandType = System.Data.CommandType.Text;
 
             OracleDataAdapter Da = new OracleDataAdapter(Cmd);

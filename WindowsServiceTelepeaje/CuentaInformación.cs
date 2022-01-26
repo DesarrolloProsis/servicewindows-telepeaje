@@ -80,7 +80,7 @@ namespace WindowsServiceTelepeaje
             try
             {
                 int sqlCount = this.CuentaTransaccionesSQLServer(fechaInicio, fechaFin).Result;
-                int oracleCount = this.CuentaTransaccionesOracle(fechaInicio, fechaFin);
+                int oracleCount = 1 /*this.CuentaTransaccionesOracle(fechaInicio, fechaFin)*/;
                 diferencia = oracleCount - sqlCount;
             }
             catch (Exception ex)
