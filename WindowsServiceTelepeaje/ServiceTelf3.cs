@@ -172,24 +172,54 @@ namespace WindowsServiceTelepeaje
 
                 H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddMinutes(-10).ToString("yyyy/MM/dd HH:mm:ss");
                 //ORACLE
-                StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
-                            "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
-                            "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
-                            "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
-                            "FROM TRANSACTION " +
-                            
-                            "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
-                            "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
-                            "WHERE" +
-                            "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
-                            "AND  ID_PAIEMENT  = 15 " +
-                            "AND  VOIE  != 'B06' " +
-                            "AND (TRANSACTION.Id_Voie = '1' " +
-                            "OR TRANSACTION.Id_Voie = '2' " +
-                            "OR TRANSACTION.Id_Voie = '3' " +
-                            "OR TRANSACTION.Id_Voie = '4' " +
-                            "OR TRANSACTION.Id_Voie = 'X') " +
-                            "ORDER BY DATE_TRANSACTION ";
+                DateTime fechaInicio = Convert.ToDateTime(ConfigurationManager.AppSettings["fechaInicio"]);
+                DateTime fechaFin = Convert.ToDateTime(ConfigurationManager.AppSettings["fechaFin"]);
+                //Cambios Richi
+                if (ConfigurationManager.AppSettings["carril"] != "")
+                {
+                    StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
+                          "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
+                          "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
+                          "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
+                          "FROM TRANSACTION " +
+
+                          "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
+                          "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
+                          "WHERE"
+                          +
+                          "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
+                          +
+                          "AND  ID_PAIEMENT  = 15 " +
+                          "AND (TRANSACTION.Id_Voie = '1' " +
+                          "OR TRANSACTION.Id_Voie = '2' " +
+                          "OR TRANSACTION.Id_Voie = '3' " +
+                          "OR TRANSACTION.Id_Voie = '4' " +
+                          "OR TRANSACTION.Id_Voie = 'X') " +
+                          "AND regexp_like (TRANSACTION.voie , '^(" + ConfigurationManager.AppSettings["carril"] + ")')" +
+                          "ORDER BY DATE_TRANSACTION ";
+                }
+                else
+                {
+                    StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
+                         "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
+                         "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
+                         "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
+                         "FROM TRANSACTION " +
+
+                         "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
+                         "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
+                         "WHERE"
+                         +
+                         "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
+                         +
+                         "AND  ID_PAIEMENT  = 15 " +
+                         "AND (TRANSACTION.Id_Voie = '1' " +
+                         "OR TRANSACTION.Id_Voie = '2' " +
+                         "OR TRANSACTION.Id_Voie = '3' " +
+                         "OR TRANSACTION.Id_Voie = '4' " +
+                         "OR TRANSACTION.Id_Voie = 'X') " +
+                         "ORDER BY DATE_TRANSACTION ";
+                }
 
                 if (MtGlb.QueryDataSet(StrQuerys, "TRANSACTION"))
                 {
