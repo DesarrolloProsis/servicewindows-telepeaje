@@ -89,12 +89,6 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="urn:transaction", Order=19)]
         public string Cuerpo;
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="urn:transaction", Order=20)]
-        public string nombreLista;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="urn:transaction", Order=21)]
-        public System.DateTime fechaCargaLista;
-        
         public MoveTransactionsUpRequest() {
         }
         
@@ -118,9 +112,7 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
                     System.DateTime UtcTime, 
                     System.DateTime LocalTime, 
                     byte tipoVehiculo, 
-                    string Cuerpo, 
-                    string nombreLista, 
-                    System.DateTime fechaCargaLista) {
+                    string Cuerpo) {
             this.secuencial = secuencial;
             this.carril = carril;
             this.Fecha = Fecha;
@@ -141,8 +133,6 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
             this.LocalTime = LocalTime;
             this.tipoVehiculo = tipoVehiculo;
             this.Cuerpo = Cuerpo;
-            this.nombreLista = nombreLista;
-            this.fechaCargaLista = fechaCargaLista;
         }
     }
     
@@ -215,9 +205,7 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
                     System.DateTime UtcTime, 
                     System.DateTime LocalTime, 
                     byte tipoVehiculo, 
-                    string Cuerpo) { 
-                    //string nombreLista, 
-                    //System.DateTime fechaCargaLista) {
+                    string Cuerpo) {
             WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest inValue = new WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest();
             inValue.secuencial = secuencial;
             inValue.carril = carril;
@@ -239,8 +227,6 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
             inValue.LocalTime = LocalTime;
             inValue.tipoVehiculo = tipoVehiculo;
             inValue.Cuerpo = Cuerpo;
-            //inValue.nombreLista = nombreLista;
-            //inValue.fechaCargaLista = fechaCargaLista;
             WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpResponse retVal = ((WindowsServiceTelepeaje.ServiceReference1.PortType)(this)).MoveTransactionsUp(inValue);
             return retVal.InsertaTranResult;
         }
@@ -270,9 +256,7 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
                     System.DateTime UtcTime, 
                     System.DateTime LocalTime, 
                     byte tipoVehiculo, 
-                    string Cuerpo, 
-                    string nombreLista, 
-                    System.DateTime fechaCargaLista) {
+                    string Cuerpo) {
             WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest inValue = new WindowsServiceTelepeaje.ServiceReference1.MoveTransactionsUpRequest();
             inValue.secuencial = secuencial;
             inValue.carril = carril;
@@ -294,8 +278,6 @@ namespace WindowsServiceTelepeaje.ServiceReference1 {
             inValue.LocalTime = LocalTime;
             inValue.tipoVehiculo = tipoVehiculo;
             inValue.Cuerpo = Cuerpo;
-            inValue.nombreLista = nombreLista;
-            inValue.fechaCargaLista = fechaCargaLista;
             return ((WindowsServiceTelepeaje.ServiceReference1.PortType)(this)).MoveTransactionsUpAsync(inValue);
         }
     }

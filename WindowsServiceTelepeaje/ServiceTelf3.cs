@@ -51,7 +51,7 @@ namespace WindowsServiceTelepeaje
         {
             timProcess = new System.Timers.Timer
             {
-                Interval = 300000
+                Interval = 100000
             };
             timProcess.Elapsed += new System.Timers.ElapsedEventHandler(TimProcess_Elapsed);
             timProcess.Enabled = true;
@@ -61,7 +61,7 @@ namespace WindowsServiceTelepeaje
         private void TimProcess_Elapsed(object sender, ElapsedEventArgs e)
         {
             timProcess.Enabled = false;
-                ExecuteProcess();
+            ExecuteProcess();
         }
 
         protected override void OnStop()
@@ -83,7 +83,7 @@ namespace WindowsServiceTelepeaje
                 //using (StreamWriter file = new StreamWriter(path + archivo, true))
                 //{
                 Int16 Rodada = 0;
-                    i++;
+                i++;
                 //    file.WriteLine("Se ejecuto el proceso ServicioWinProsis: " + i.ToString() + " a las " + DateTime.Now.ToString()); //se agrega información al documento
                 //    file.Dispose();
                 //    file.Close();
@@ -92,7 +92,7 @@ namespace WindowsServiceTelepeaje
 
                 /***********************************************************************************************************/
 
-                
+
                 if (iniciarCon)
                 {
                     MtGlb = new MetodosGlbRepository();
@@ -177,6 +177,7 @@ namespace WindowsServiceTelepeaje
                 //Cambios Richi
                 if (ConfigurationManager.AppSettings["carril"] != "")
                 {
+                    //H_inicio_turno = Convert.ToDateTime(H_inicio_turno).AddDays(-3).ToString("yyyy/MM/dd HH:mm:ss");
                     StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
                           "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
                           "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
@@ -201,24 +202,24 @@ namespace WindowsServiceTelepeaje
                 else
                 {
                     StrQuerys = "SELECT DATE_TRANSACTION, VOIE,  EVENT_NUMBER, FOLIO_ECT, Version_Tarif, ID_PAIEMENT, " +
-                         "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
-                         "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
-                         "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
-                         "FROM TRANSACTION " +
+                             "TAB_ID_CLASSE, TYPE_CLASSE.LIBELLE_COURT1 AS CLASE_MARCADA,  NVL(TRANSACTION.Prix_Total,0) as MONTO_MARCADO, " +
+                             "ACD_CLASS, TYPE_CLASSE_ETC.LIBELLE_COURT1 AS CLASE_DETECTADA, NVL(TRANSACTION.transaction_CPT1 / 100, 0) as MONTO_DETECTADO, " +
+                             "CONTENU_ISO, CODE_GRILLE_TARIF, ID_OBS_MP, Shift_number, TRANSACTION_CPT1 " +
+                             "FROM TRANSACTION " +
 
-                         "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
-                         "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
-                         "WHERE"
-                         +
-                         "(DATE_TRANSACTION BETWEEN TO_DATE('" + Convert.ToDateTime(fechaInicio).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS') AND TO_DATE('" + Convert.ToDateTime(fechaFin).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))"
-                         +
-                         "AND  ID_PAIEMENT  = 15 " +
-                         "AND (TRANSACTION.Id_Voie = '1' " +
-                         "OR TRANSACTION.Id_Voie = '2' " +
-                         "OR TRANSACTION.Id_Voie = '3' " +
-                         "OR TRANSACTION.Id_Voie = '4' " +
-                         "OR TRANSACTION.Id_Voie = 'X') " +
-                         "ORDER BY DATE_TRANSACTION ";
+                             "JOIN TYPE_CLASSE ON TAB_ID_CLASSE = TYPE_CLASSE.ID_CLASSE  " +
+                             "LEFT JOIN TYPE_CLASSE   TYPE_CLASSE_ETC  ON ACD_CLASS = TYPE_CLASSE_ETC.ID_CLASSE " +
+                             "WHERE" +
+                             "(DATE_TRANSACTION > TO_DATE('" + Convert.ToDateTime(H_inicio_turno).ToString("yyyyMMddHHmmss") + "','YYYYMMDDHH24MISS'))  " +
+                             "AND  ID_PAIEMENT  = 15 " +
+                 
+                             "AND (TRANSACTION.Id_Voie = '1' " +
+                             "OR TRANSACTION.Id_Voie = '2' " +
+                             "OR TRANSACTION.Id_Voie = '3' " +
+                             "OR TRANSACTION.Id_Voie = '4' " +
+                             "OR TRANSACTION.Id_Voie = 'X') " +
+                             "ORDER BY DATE_TRANSACTION ";
+
                 }
 
                 if (MtGlb.QueryDataSet(StrQuerys, "TRANSACTION"))
@@ -257,8 +258,8 @@ namespace WindowsServiceTelepeaje
                             if (duplicate == 0)
                             {
                                 StrQuerys = "SELECT count(EVENT_NUMBER) " +
-                                            "FROM pn_importacion_wsIndra " +
-                                            "where DATE_TRANSACTION = '" + Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("yyyy-MM-dd HH:mm:ss") + "' " +
+                                            "FROM [ProsisDBv1_1].[dbo].[pn_importacion_wsIndra]" +
+                                            "where DATE_TRANSACTION = '" + Convert.ToDateTime(MtGlb.oDataRow["DATE_TRANSACTION"]).ToString("yyyy-dd-MM HH:mm:ss") + "' " +
                                             "and VOIE = '" + MtGlb.oDataRow["VOIE"].ToString() + "' " +
                                             "and EVENT_NUMBER = " + MtGlb.oDataRow["EVENT_NUMBER"].ToString() + " " +
                                             " and FOLIO_ECT = " + MtGlb.oDataRow["FOLIO_ECT"].ToString() +
@@ -268,6 +269,7 @@ namespace WindowsServiceTelepeaje
 
                                 if (MtGlb.QueryDataSet_SqlServerDBv1_1(StrQuerys, "pn_importacion_wsIndra"))
                                 {
+                                         
                                     if (MtGlb.oDataRowSqlServer.HasErrors == false)
                                     {
                                         if (Convert.ToInt32(MtGlb.oDataRowSqlServer[0]) < 1)
@@ -606,7 +608,7 @@ namespace WindowsServiceTelepeaje
                     timProcess.Enabled = true;
                 }
 
-                
+
             }
             catch (Exception ex)
             {
@@ -628,12 +630,12 @@ namespace WindowsServiceTelepeaje
                 //MtGlb.ExitConnectionProsis();
             }
         }
-    
+
 
         //Metodo para escribir log con el ultimo registro al inicio
         private void EscribeLog(string newRow)
         {
-            string contenido="";
+            string contenido = "";
             try
             {
                 StreamReader sr = new StreamReader(path + archivo, true);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="42eb6bc8-b197-4b09-8c1f-bee45189e075" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="b4c32f67-d094-4356-96e1-cf7c9b66b701" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -19,10 +19,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://172.30.43.100:8080/transactions-receiver/services/PlazaWS?wsdl" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://172.30.237.100:8080/transactions-receiver/services/PlazaWS?wsdl" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Service.wsdl" MetadataType="Wsdl" ID="36534762-eb3a-4d38-9bec-860a53bb741a" SourceId="1" SourceUrl="http://172.30.43.100:8080/transactions-receiver/services/PlazaWS?wsdl" />
+    <MetadataFile FileName="Service.wsdl" MetadataType="Wsdl" ID="87d9f986-710d-43c3-bb5d-fe5ec92dcfc8" SourceId="1" SourceUrl="http://172.30.237.100:8080/transactions-receiver/services/PlazaWS?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
